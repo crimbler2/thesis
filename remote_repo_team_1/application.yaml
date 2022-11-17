@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: nginx-sample
-  namespace: apps
+  namespace: team1
 spec:
   project: default
 
@@ -12,7 +12,7 @@ spec:
     path: remote_repo_team_1/nginx-sample
   destination:
     server: https://kubernetes.default.svc
-    namespace: apps
+    namespace: team1
 
   syncPolicy:
     syncOptions:
