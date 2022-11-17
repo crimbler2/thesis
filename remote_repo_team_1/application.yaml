@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: nginx-sample
-  namespace: team1
+  namespace: argocd-system
 spec:
   project: default
 
