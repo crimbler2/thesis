@@ -18,10 +18,11 @@ spec:
           value: LoadBalancer
         - name: configs.secret.argocdServerAdminPassword
           value: $2a$12$K.m1Ec0RHovE1e/RrwYnWuE7uKXkkSiZJ10ZqvyieJadyJKAIlfY.
-
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd-system
+
+  syncPolicy:
     automated:
       selfHeal: true
       prune: true
