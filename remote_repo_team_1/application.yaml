@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: https://github.com/crimbler2/argocd-infrastructure-repo
     targetRevision: HEAD
-    path: remote_repo_team_1/nginx-sample/resources
+    path: remote_repo_team_1/nginx-sample
   destination:
     server: https://kubernetes.default.svc
     namespace: apps
