@@ -1,0 +1,6 @@
+tenant:
+  owner: "ops@bmw.de"
+  name: "argocd"
+repository:
+  url: https://github.com/crimbler2/argocd-infrastructure-repo.git
+  path: argocd-system
