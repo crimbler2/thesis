@@ -1,18 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: myapp-argo-application
-  namespace: argocd
+  name: nginx-sample
+  namespace: apps
 spec:
   project: default
 
   source:
     repoURL: https://github.com/crimbler2/argocd-infrastructure-repo
     targetRevision: HEAD
-    path: dev
+    path: remote_repo_team_1/nginx-sample/resources
   destination:
     server: https://kubernetes.default.svc
-    namespace: myapp
+    namespace: apps
 
   syncPolicy:
     syncOptions:

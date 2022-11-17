@@ -1,0 +1,7 @@
+tenant:
+  owner: "team1@bmw.de"
+  name: "team1"
+  namespace: "team1"
+repository:
+  url: https://github.com/crimbler2/argocd-infrastructure-repo.git
+  path: remote_repo_team_1
