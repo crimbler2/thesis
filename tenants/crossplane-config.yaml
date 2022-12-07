@@ -1,0 +1,7 @@
+tenant:
+  owner: "crossplane@bmw.de"
+  name: "crossplane"
+  namespace: "crossplane-system"
+repository:
+  url: https://github.com/crimbler2/argocd-infrastructure-repo.git
+  path: crossplane-system
