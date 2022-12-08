@@ -1,17 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
+namespace: argocd-system
 metadata:
-  name: crossplane
-  namespace: argocd-system
+  name: crossplane-chart
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
 
   source:
-    repoURL: https://github.com/crimbler2/argocd-infrastructure-repo.git
-    targetRevision: HEAD
-    path: crossplane-system/resources
+    chart: crossplane
+    repoURL: https://charts.crossplane.io/stable
   destination:
     server: https://kubernetes.default.svc
     namespace: crossplane-system
