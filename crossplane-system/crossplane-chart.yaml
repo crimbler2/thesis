@@ -5,7 +5,7 @@ metadata:
   name: crossplane-helm-repo
   namespace: argocd-system
   annotations:
-    argocd.argoproj.io/sync-wave: "0"
+    argocd.argoproj.io/sync-wave: "-1"
   labels:
     argocd.argoproj.io/secret-type: repository
 stringData:
@@ -18,8 +18,6 @@ kind: Application
 metadata:
   name: crossplane-chart
   namespace: argocd-system
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
