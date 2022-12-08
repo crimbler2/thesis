@@ -2,7 +2,7 @@
 apiVersion: pkg.crossplane.io/v1alpha1
 kind: ControllerConfig
 metadata:
-  name: aws-config
+  name: aws-controller-config
   namespace: crossplane-system
   annotations:
     eks.amazonaws.com/role-arn: arn:aws:iam::843588259092:role/thesis-sa
@@ -15,7 +15,7 @@ spec:
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
-  name: provider-aws
+  name: aws-provider
   namespace: crossplane-system
   argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
   argocd.argoproj.io/sync-wave: "60"
@@ -27,7 +27,7 @@ spec:
 apiVersion: aws.crossplane.io/v1beta1
 kind: ProviderConfig
 metadata:
-  name: provider-aws-config
+  name: aws-provider-config
   namespace: crossplane-system
   argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
   argocd.argoproj.io/sync-wave: "80"
