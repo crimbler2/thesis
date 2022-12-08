@@ -22,7 +22,7 @@ metadata:
 spec:
   package: crossplane/provider-aws:v0.30.0
   controllerConfigRef:
-    name: aws-config
+    name: aws-controller-config
 ---
 apiVersion: batch/v1
 kind: Job
