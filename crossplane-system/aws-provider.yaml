@@ -24,6 +24,24 @@ spec:
   controllerConfigRef:
     name: aws-config
 ---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: after-provider-aws
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+    argocd.argoproj.io/sync-wave: "70"
+spec:
+  template:
+    spec:
+      containers:
+        - name: page-down
+          image: alpine:latest
+          command: ["sleep", "30"]
+      restartPolicy: Never
+
+---
 apiVersion: aws.crossplane.io/v1beta1
 kind: ProviderConfig
 metadata:
