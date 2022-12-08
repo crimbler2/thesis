@@ -4,8 +4,6 @@ kind: Secret
 metadata:
   name: crossplane-helm-repo
   namespace: argocd-system
-  annotations:
-    argocd.argoproj.io/sync-wave: "-1"
   labels:
     argocd.argoproj.io/secret-type: repository
 stringData:
@@ -31,26 +29,8 @@ spec:
     namespace: crossplane-system
 
   syncPolicy:
-    syncOptions:
-      - CreateNamespace=true
-
     automated:
       selfHeal: true
       prune: true
 ---
-apiVersion: batch/v1
-kind: Job
-metadata:
-  generateName: after-crossplane-chart
-  annotations:
-    argocd.argoproj.io/hook: Sync
-    argocd.argoproj.io/sync-wave: "2"
-spec:
-  template:
-    spec:
-      containers:
-        - name: page-down
-          image: alpine:latest
-          command: ["sleep", "30"]
-      restartPolicy: Never
----
+
