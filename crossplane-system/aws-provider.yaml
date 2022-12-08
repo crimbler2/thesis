@@ -39,7 +39,6 @@ spec:
           image: alpine:latest
           command: ["sleep", "30"]
       restartPolicy: Never
-
 ---
 apiVersion: aws.crossplane.io/v1beta1
 kind: ProviderConfig

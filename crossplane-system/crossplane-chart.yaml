@@ -24,7 +24,6 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
-
   source:
     chart: crossplane
     repoURL: https://charts.crossplane.io/stable
@@ -40,3 +39,20 @@ spec:
     automated:
       selfHeal: true
       prune: true
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: after-crossplane-chart
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  template:
+    spec:
+      containers:
+        - name: page-down
+          image: alpine:latest
+          command: ["sleep", "30"]
+      restartPolicy: Never
+---
