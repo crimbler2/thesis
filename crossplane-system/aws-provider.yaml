@@ -1,9 +1,36 @@
+---
+apiVersion: pkg.crossplane.io/v1alpha1
+kind: ControllerConfig
+metadata:
+  name: aws-config
+  namespace: crossplane-system
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::843588259092:role/thesis-sa
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "50"
+spec:
+  podSecurityContext:
+    fsGroup: 2000
+---
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
   name: provider-aws
   namespace: crossplane-system
+  argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  argocd.argoproj.io/sync-wave: "60"
 spec:
   package: crossplane/provider-aws:v0.30.0
   controllerConfigRef:
     name: aws-config
+---
+apiVersion: aws.crossplane.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: provider-aws-config
+  namespace: crossplane-system
+  argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  argocd.argoproj.io/sync-wave: "80"
+spec:
+  credentials:
+    source: InjectedIdentity
