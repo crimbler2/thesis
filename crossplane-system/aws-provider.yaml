@@ -45,8 +45,9 @@ kind: ProviderConfig
 metadata:
   name: aws-provider-config
   namespace: crossplane-system
-  argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-  argocd.argoproj.io/sync-wave: "80"
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "80"
 spec:
   credentials:
     source: InjectedIdentity
