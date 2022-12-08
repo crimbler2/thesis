@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nginx-sample-2
+  namespace: argocd-system
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/crimbler2/argocd-infrastructure-repo.git
+    targetRevision: HEAD
+    path: remote_repo_team_2/nginx-sample
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: team2
+
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+
+    automated:
+      selfHeal: true
+      prune: true
