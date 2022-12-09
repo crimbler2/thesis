@@ -5,7 +5,7 @@ metadata:
   namespace: crossplane-system
 spec:
   parameters:
-    providerConfigRef: provider-aws-config
+    providerConfigRef: aws-provider-config
 
     region: eu-central-1
     vpc-name: "EKS-CROSSPLANE-VPC"
