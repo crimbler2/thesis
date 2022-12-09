@@ -1,0 +1,36 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: aws-vpc
+  labels:
+    provider: aws
+    service: vpc
+    compute: managed
+spec:
+  writeConnectionSecretsToNamespace: crossplane-system
+  compositeTypeRef:
+    apiVersion: thesis.io/v1alpha1
+    kind: myVPC
+  resources:
+    - name: vpc
+      base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: VPC
+        metadata:
+          name: thesis-crossplane-vpc
+        spec:
+          deletionPolicy: Delete
+          forProvider:
+            region: eu-central-1
+            tags:
+              - key: thesis
+                value: crossplane
+              - key: Name
+                value: "-"
+          providerConfigRef:
+            name: provider-aws-config
+      patches:
+        - fromFieldPath: "spec.cidrBlock"
+          toFieldPath: "spec.forProvider.cidrBlock"
+        - fromFieldPath: "metadata.name"
+          toFieldPath: "spec.forProvider.tags[1].value"

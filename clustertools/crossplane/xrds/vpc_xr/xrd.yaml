@@ -1,0 +1,40 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: myvpcs.thesis.io
+spec:
+  group: thesis.io
+  names:
+    kind: myVPC
+    plural: myvpcs
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                cidrBlock:
+                  type: string
+                  description: "The CIDR block of the internal IPs in the VPC"
+                subnets:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      public:
+                        type: boolean
+                        description: "Defines if machines inside this subnet are reachable from the internet"
+                        cidrBlock:
+                          type: string
+                          description: "The CIDR block of the internal IPs in the subnet. Must be a subset of the VPC's IPs"
+                        availabilityZone:
+                          type: string
+                          description: "The availability zone of the subnet"
+
+
+
