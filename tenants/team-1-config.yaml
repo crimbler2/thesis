@@ -5,3 +5,4 @@ tenant:
 repository:
   url: https://github.com/crimbler2/argocd-infrastructure-repo.git
   path: remote_repo_team_1
+  recurse: false
