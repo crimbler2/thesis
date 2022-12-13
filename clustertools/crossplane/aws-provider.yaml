@@ -7,7 +7,7 @@ metadata:
   annotations:
     eks.amazonaws.com/role-arn: arn:aws:iam::843588259092:role/thesis-sa
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-    argocd.argoproj.io/sync-wave: "50"
+    argocd.argoproj.io/sync-wave: "-90"
 spec:
   podSecurityContext:
     fsGroup: 2000
@@ -19,28 +19,28 @@ metadata:
   namespace: crossplane-system
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-    argocd.argoproj.io/sync-wave: "60"
+    argocd.argoproj.io/sync-wave: "-80"
 spec:
   package: crossplane/provider-aws:v0.30.0
   controllerConfigRef:
     name: aws-controller-config
----
-apiVersion: batch/v1
-kind: Job
-metadata:
-  generateName: after-provider-aws
-  annotations:
-    argocd.argoproj.io/hook: Sync
-    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
-    argocd.argoproj.io/sync-wave: "70"
-spec:
-  template:
-    spec:
-      containers:
-        - name: page-down
-          image: alpine:latest
-          command: ["sleep", "30"]
-      restartPolicy: Never
+# ---
+# apiVersion: batch/v1
+# kind: Job
+# metadata:
+#   generateName: after-provider-aws
+#   annotations:
+#     argocd.argoproj.io/hook: Sync
+#     argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+#     argocd.argoproj.io/sync-wave: "-70"
+# spec:
+#   template:
+#     spec:
+#       containers:
+#         - name: page-down
+#           image: alpine:latest
+#           command: ["sleep", "30"]
+#       restartPolicy: Never
 ---
 apiVersion: aws.crossplane.io/v1beta1
 kind: ProviderConfig
@@ -49,7 +49,7 @@ metadata:
   namespace: crossplane-system
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-    argocd.argoproj.io/sync-wave: "80"
+    argocd.argoproj.io/sync-wave: "-60"
 spec:
   credentials:
     source: InjectedIdentity
