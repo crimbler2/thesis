@@ -535,6 +535,8 @@ spec:
       patches:
         - type: PatchSet
           patchSetName: common-parameters
+        - fromFieldPath: "spec.parameters.k8s-version"
+          toFieldPath: "spec.forProvider.version"
         - fromFieldPath: "spec.parameters.workers-size"
           toFieldPath: "spec.forProvider.scalingConfig.desiredSize"
         - fromFieldPath: "spec.parameters.workers-size"
