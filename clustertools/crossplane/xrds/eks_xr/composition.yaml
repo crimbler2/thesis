@@ -497,17 +497,12 @@ spec:
                 role: cluster-role
           writeConnectionSecretToRef:
             namespace: crossplane-system
+            name: ekscluster-connection
       patches:
         - type: PatchSet
           patchSetName: common-parameters
         - fromFieldPath: "spec.parameters.k8s-version"
           toFieldPath: "spec.forProvider.version"
-        - fromFieldPath: "metadata.uid"
-          toFieldPath: "spec.writeConnectionSecretToRef.name"
-          transforms:
-            - type: string
-              string:
-                fmt: "%s-ekscluster-connection"
 
       connectionDetails:
         - name: cluster-ca
