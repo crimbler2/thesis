@@ -27,6 +27,6 @@ spec:
     subnet2-private-cidrBlock: "10.19.3.0/24"
     subnet2-private-availabilityZone: "eu-central-1b"
 
-    k8s-version: "1.23"
+    k8s-version: "1.24"
     workload-type: "non-gpu"
     workers-size: 2
