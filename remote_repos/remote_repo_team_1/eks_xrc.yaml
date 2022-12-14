@@ -28,5 +28,5 @@ spec:
     subnet2-private-availabilityZone: "eu-central-1b"
 
     k8s-version: "1.23"
-    workload-type: "non-gpu"
+    workload-type: "gpu"
     workers-size: 2
