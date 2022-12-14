@@ -483,6 +483,8 @@ spec:
       base:
         apiVersion: eks.aws.crossplane.io/v1beta1
         kind: Cluster
+        metadata:
+          name: crossplane-cluster
         spec:
           forProvider:
             resourcesVpcConfig:
