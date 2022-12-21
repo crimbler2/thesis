@@ -4,7 +4,6 @@ metadata:
   name: crossplane-cluster
   namespace: crossplane-system
 spec:
-  parameters:
-    providerConfigRef: aws-provider-config
-    region: eu-central-1
-    k8s-version: "1.24"
+  providerConfigRef: aws-provider-config
+  region: eu-central-1
+  k8s-version: "1.24"
