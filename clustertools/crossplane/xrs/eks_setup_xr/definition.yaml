@@ -95,4 +95,4 @@ spec:
               required:
                     - region
                     - k8s-version
-                    - provider-config-ref
+                    - providerConfigRef
