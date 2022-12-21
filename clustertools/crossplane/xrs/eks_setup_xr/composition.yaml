@@ -10,7 +10,7 @@ spec:
   writeConnectionSecretsToNamespace: crossplane-system
   compositeTypeRef:
     apiVersion: thesis.io/v1alpha1
-    kind: myCluster
+    kind: clusterSetup
 
   patchSets:
     - name: common-parameters

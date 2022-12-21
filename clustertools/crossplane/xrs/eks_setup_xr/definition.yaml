@@ -1,12 +1,12 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: CompositeResourceDefinition
 metadata:
-  name: myclusters.thesis.io
+  name: clustersetups.thesis.io
 spec:
   group: thesis.io
   names:
-    kind: myCluster
-    plural: myclusters
+    kind: clusterSetup
+    plural: clustersetups
   connectionSecretKeys:
     - cluster-ca
     - apiserver-endpoint
