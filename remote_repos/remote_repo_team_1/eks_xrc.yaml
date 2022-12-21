@@ -1,32 +1,10 @@
-# apiVersion: thesis.io/v1alpha1
-# kind: myCluster
-# metadata:
-#   name: crossplane-cluster
-#   namespace: crossplane-system
-# spec:
-#   parameters:
-#     providerConfigRef: aws-provider-config
-#
-#     region: eu-central-1
-#     vpc-name: "EKS-CROSSPLANE-VPC"
-#     vpc-cidrBlock: "10.19.0.0/16"
-#
-#     subnet1-public-name: "PUBLIC-WORKER-1"
-#     subnet1-public-cidrBlock: "10.19.0.0/24"
-#     subnet1-public-availabilityZone: "eu-central-1a"
-#
-#     subnet2-public-name: "PUBLIC-WORKER-2"
-#     subnet2-public-cidrBlock: "10.19.1.0/24"
-#     subnet2-public-availabilityZone: "eu-central-1b"
-#
-#     subnet1-private-name: "PRIVATE-WORKER-1"
-#     subnet1-private-cidrBlock: "10.19.2.0/24"
-#     subnet1-private-availabilityZone: "eu-central-1a"
-#
-#     subnet2-private-name: "PRIVATE-WORKER-2"
-#     subnet2-private-cidrBlock: "10.19.3.0/24"
-#     subnet2-private-availabilityZone: "eu-central-1b"
-#
-#     k8s-version: "1.24"
-#     workload-type: "non-gpu"
-#     workers-size: 2
+apiVersion: thesis.io/v1alpha1
+kind: clusterSetup
+metadata:
+  name: crossplane-cluster
+  namespace: crossplane-system
+spec:
+  parameters:
+    providerConfigRef: aws-provider-config
+    region: eu-central-1
+    k8s-version: "1.24"
