@@ -520,7 +520,7 @@ spec:
           transforms:
             - type: string
               string:
-                fmt: %s-cluster-role
+                fmt: "%s-cluster-role"
 
       connectionDetails:
         - name: cluster-ca
@@ -556,13 +556,13 @@ spec:
           transforms:
             - type: string
               string:
-                fmt: %s-cluster-role
+                fmt: "%s-cluster-role"
         - fromFieldPath: metadata.name
           toFieldPath: spec.forProvider.nodeRoleSelector.matchLabels.role
           transforms:
             - type: string
               string:
-                fmt: %s-node-role
+                fmt: "%s-node-role"
         - fromFieldPath: spec.k8s-version
           toFieldPath: spec.forProvider.version
         - fromFieldPath: spec.workers-size
@@ -609,19 +609,19 @@ spec:
           transforms:
             - type: string
               string:
-                fmt: %s-node-role
+                fmt: "%s-node-role"
         - fromFieldPath: metadata.name
           toFieldPath: metadata.name
           transforms:
             - type: string
               string:
-                fmt: %s-node-role
+                fmt: "%s-node-role"
         - fromFieldPath: metadata.name
           toFieldPath: spec.forProvider.tags[0].value
           transforms:
             - type: string
               string:
-                fmt: %s-node-role
+                fmt: "%s-node-role"
 
     - name: node-role-worker-policy
       base:
@@ -640,7 +640,7 @@ spec:
           transforms:
             - type: string
               string:
-                fmt: %s-node-role
+                fmt: "%s-node-role"
 
     - name: node-role-cni-policy
       base:
@@ -659,7 +659,7 @@ spec:
           transforms:
             - type: string
               string:
-                fmt: %s-node-role
+                fmt: "%s-node-role"
 
     - name: node-role-ecr-policy
       base:
@@ -678,4 +678,4 @@ spec:
           transforms:
             - type: string
               string:
-                fmt: %s-node-role
+                fmt: "%s-node-role"
