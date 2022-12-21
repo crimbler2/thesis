@@ -115,8 +115,17 @@ spec:
           patchSetName: common-parameters
         - fromFieldPath: spec.public-subnet-cidrBlock
           toFieldPath: spec.forProvider.cidrBlock
-        - fromFieldPath: spec.public-subnet-availabilityZone
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: spec.region
+              - fromFieldPath: spec.public-subnet-availability-zone
+            strategy: string
+            string:
+              fmt: "%s%s"
           toFieldPath: spec.forProvider.availabilityZone
+          policy:
+            fromFieldPath: Required
         - fromFieldPath: spec.public-subnet-availabilityZone
           toFieldPath: metadata.labels.zone
 
@@ -164,8 +173,17 @@ spec:
           patchSetName: common-parameters
         - fromFieldPath: spec.private-subnet-1-cidrBlock
           toFieldPath: spec.forProvider.cidrBlock
-        - fromFieldPath: spec.private-subnet-1-availabilityZone
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: spec.region
+              - fromFieldPath: spec.private-subnet-1-availability-zone
+            strategy: string
+            string:
+              fmt: "%s%s"
           toFieldPath: spec.forProvider.availabilityZone
+          policy:
+            fromFieldPath: Required
         - fromFieldPath: spec.private-subnet-1-availabilityZone
           toFieldPath: metadata.labels.zone
 
@@ -211,8 +229,17 @@ spec:
             fromFieldPath: Required
         - type: PatchSet
           patchSetName: common-parameters
-        - fromFieldPath: spec.private-subnet-2-cidrBlock
-          toFieldPath: spec.forProvider.cidrBlock
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: spec.region
+              - fromFieldPath: spec.private-subnet-2-availability-zone
+            strategy: string
+            string:
+              fmt: "%s%s"
+          toFieldPath: spec.forProvider.availabilityZone
+          policy:
+            fromFieldPath: Required
         - fromFieldPath: spec.private-subnet-2-availabilityZone
           toFieldPath: spec.forProvider.availabilityZone
         - fromFieldPath: spec.private-subnet-2-availabilityZone
