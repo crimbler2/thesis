@@ -121,7 +121,7 @@ spec:
           combine:
             variables:
               - fromFieldPath: spec.region
-              - fromFieldPath: spec.public-subnet-availability-zone
+              - fromFieldPath: spec.public-subnet-availabilityZone
             strategy: string
             string:
               fmt: "%s%s"
@@ -179,7 +179,7 @@ spec:
           combine:
             variables:
               - fromFieldPath: spec.region
-              - fromFieldPath: spec.private-subnet-1-availability-zone
+              - fromFieldPath: spec.private-subnet-1-availabilityZone
             strategy: string
             string:
               fmt: "%s%s"
@@ -235,7 +235,7 @@ spec:
           combine:
             variables:
               - fromFieldPath: spec.region
-              - fromFieldPath: spec.private-subnet-2-availability-zone
+              - fromFieldPath: spec.private-subnet-2-availabilityZone
             strategy: string
             string:
               fmt: "%s%s"
@@ -355,7 +355,7 @@ spec:
           combine:
             variables:
               - fromFieldPath: metadata.name
-              - fromFieldPath: public-subnet-name
+              - fromFieldPath: spec.public-subnet-name
             strategy: string
             string:
               fmt: "%s-%s-subnet"
@@ -403,7 +403,7 @@ spec:
           combine:
             variables:
               - fromFieldPath: metadata.name
-              - fromFieldPath: private-subnet-1-name
+              - fromFieldPath: spec.private-subnet-1-name
             strategy: string
             string:
               fmt: "%s-%s-subnet"
@@ -450,7 +450,7 @@ spec:
           combine:
             variables:
               - fromFieldPath: metadata.name
-              - fromFieldPath: private-subnet-2-name
+              - fromFieldPath: spec.private-subnet-2-name
             strategy: string
             string:
               fmt: "%s-%s-subnet"
