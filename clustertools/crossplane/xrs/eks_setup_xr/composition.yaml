@@ -516,7 +516,7 @@ spec:
         - type: PatchSet
           patchSetName: common-parameters
         - fromFieldPath: metadata.name
-          toFieldPath: spec.forProvider.RoleNameSelector.matchLabels.role
+          toFieldPath: spec.forProvider.roleNameSelector.matchLabels.role
           transforms:
             - type: string
               string:
@@ -662,7 +662,7 @@ spec:
         - type: PatchSet
           patchSetName: common-parameters
         - fromFieldPath: metadata.name
-          toFieldPath: spec.forProvider.nodeRoleSelector.matchLabels.role
+          toFieldPath: spec.forProvider.roleNameSelector.matchLabels.role
           transforms:
             - type: string
               string:
@@ -681,7 +681,7 @@ spec:
         - type: PatchSet
           patchSetName: common-parameters
         - fromFieldPath: metadata.name
-          toFieldPath: spec.forProvider.nodeRoleSelector.matchLabels.role
+          toFieldPath: spec.forProvider.roleNameSelector.matchLabels.role
           transforms:
             - type: string
               string:
@@ -700,7 +700,7 @@ spec:
         - type: PatchSet
           patchSetName: common-parameters
         - fromFieldPath: metadata.name
-          toFieldPath: spec.forProvider.nodeRoleSelector.matchLabels.role
+          toFieldPath: spec.forProvider.roleNameSelector.matchLabels.role
           transforms:
             - type: string
               string:
