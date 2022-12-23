@@ -610,9 +610,6 @@ spec:
       base:
         apiVersion: iam.aws.crossplane.io/v1beta1
         kind: Role
-        metadata:
-          labels:
-            role: node-role
         spec:
           forProvider:
             assumeRolePolicyDocument: |
