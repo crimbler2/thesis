@@ -516,7 +516,7 @@ spec:
         - type: PatchSet
           patchSetName: common-parameters
         - fromFieldPath: metadata.name
-          toFieldPath: spec.forProvider.matchLabels.role
+          toFieldPath: spec.forProvider.RoleNameSelector.matchLabels.role
           transforms:
             - type: string
               string:
