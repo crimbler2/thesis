@@ -545,6 +545,12 @@ spec:
         - fromFieldPath: spec.k8s-version
           toFieldPath: spec.forProvider.version
         - fromFieldPath: metadata.name
+          toFieldPath: metadata.labels.type
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-cluster"
+        - fromFieldPath: metadata.name
           toFieldPath: spec.forProvider.roleArnSelector.matchLabels.role
           transforms:
             - type: string
@@ -592,6 +598,12 @@ spec:
             - type: string
               string:
                 fmt: "%s-node-role"
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.clusterNameSelector.matchLabels.type
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-cluster"
         - fromFieldPath: spec.k8s-version
           toFieldPath: spec.forProvider.version
         - fromFieldPath: spec.workers-size
