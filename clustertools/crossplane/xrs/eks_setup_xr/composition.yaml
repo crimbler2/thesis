@@ -231,6 +231,8 @@ spec:
             fromFieldPath: Required
         - type: PatchSet
           patchSetName: common-parameters
+        - fromFieldPath: spec.private-subnet-2-cidrBlock
+          toFieldPath: spec.forProvider.cidrBlock
         - type: CombineFromComposite
           combine:
             variables:
