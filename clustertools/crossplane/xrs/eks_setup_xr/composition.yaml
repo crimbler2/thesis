@@ -245,8 +245,6 @@ spec:
           policy:
             fromFieldPath: Required
         - fromFieldPath: spec.private-subnet-2-availabilityZone
-          toFieldPath: spec.forProvider.availabilityZone
-        - fromFieldPath: spec.private-subnet-2-availabilityZone
           toFieldPath: metadata.labels.zone
 
     - name: elastic-ip
