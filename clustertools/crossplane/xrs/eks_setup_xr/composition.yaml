@@ -545,7 +545,7 @@ spec:
         - fromFieldPath: spec.k8s-version
           toFieldPath: spec.forProvider.version
         - fromFieldPath: metadata.name
-          toFieldPath: spec.forProvider.matchLabels.role
+          toFieldPath: spec.forProvider.roleArnSelector.matchLabels.role
           transforms:
             - type: string
               string:
