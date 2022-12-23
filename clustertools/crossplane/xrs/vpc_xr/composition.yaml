@@ -6,6 +6,8 @@ metadata:
     provider: aws
     service: vpc
     compute: managed
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   writeConnectionSecretsToNamespace: crossplane-system
   compositeTypeRef:
