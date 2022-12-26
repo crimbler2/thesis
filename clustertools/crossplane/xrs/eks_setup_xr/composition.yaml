@@ -95,7 +95,7 @@ spec:
           combine:
             variables:
               - fromFieldPath: metadata.name
-              - fromFieldPath: spec.public-subnet-name
+              - fromFieldPath: spec.subnets.public.name
             strategy: string
             string:
               fmt: "%s-%s-subnet"
@@ -106,7 +106,7 @@ spec:
           combine:
             variables:
               - fromFieldPath: metadata.name
-              - fromFieldPath: spec.public-subnet-name
+              - fromFieldPath: spec.subnets.public.name
             strategy: string
             string:
               fmt: "%s-%s-subnet"
@@ -115,20 +115,20 @@ spec:
             fromFieldPath: Required
         - type: PatchSet
           patchSetName: common-parameters
-        - fromFieldPath: spec.public-subnet-cidrBlock
+        - fromFieldPath: spec.subnets.public.cidrBlock
           toFieldPath: spec.forProvider.cidrBlock
         - type: CombineFromComposite
           combine:
             variables:
               - fromFieldPath: spec.region
-              - fromFieldPath: spec.public-subnet-availabilityZone
+              - fromFieldPath: spec.subnets.public.availabilityZone
             strategy: string
             string:
               fmt: "%s%s"
           toFieldPath: spec.forProvider.availabilityZone
           policy:
             fromFieldPath: Required
-        - fromFieldPath: spec.public-subnet-availabilityZone
+        - fromFieldPath: spec.subnets.public.availabilityZone
           toFieldPath: metadata.labels.zone
 
     - name: subnet-private-1
@@ -153,7 +153,7 @@ spec:
           combine:
             variables:
               - fromFieldPath: metadata.name
-              - fromFieldPath: spec.private-subnet-1-name
+              - fromFieldPath: spec.subnets.private-1.name
             strategy: string
             string:
               fmt: "%s-%s-subnet"
@@ -164,7 +164,7 @@ spec:
           combine:
             variables:
               - fromFieldPath: metadata.name
-              - fromFieldPath: spec.private-subnet-1-name
+              - fromFieldPath: spec.subnets.private-1.name
             strategy: string
             string:
               fmt: "%s-%s-subnet"
@@ -173,20 +173,20 @@ spec:
             fromFieldPath: Required
         - type: PatchSet
           patchSetName: common-parameters
-        - fromFieldPath: spec.private-subnet-1-cidrBlock
+        - fromFieldPath: spec.subnets.private-1.cidrBlock
           toFieldPath: spec.forProvider.cidrBlock
         - type: CombineFromComposite
           combine:
             variables:
               - fromFieldPath: spec.region
-              - fromFieldPath: spec.private-subnet-1-availabilityZone
+              - fromFieldPath: spec.subnets.private-1.availabilityZone
             strategy: string
             string:
               fmt: "%s%s"
           toFieldPath: spec.forProvider.availabilityZone
           policy:
             fromFieldPath: Required
-        - fromFieldPath: spec.private-subnet-1-availabilityZone
+        - fromFieldPath: spec.subnets.private-1.availabilityZone
           toFieldPath: metadata.labels.zone
 
     - name: subnet-private-2
@@ -211,7 +211,7 @@ spec:
           combine:
             variables:
               - fromFieldPath: metadata.name
-              - fromFieldPath: spec.private-subnet-2-name
+              - fromFieldPath: spec.subnets.private-2.name
             strategy: string
             string:
               fmt: "%s-%s-subnet"
@@ -222,7 +222,7 @@ spec:
           combine:
             variables:
               - fromFieldPath: metadata.name
-              - fromFieldPath: spec.private-subnet-2-name
+              - fromFieldPath: spec.subnets.private-2.name
             strategy: string
             string:
               fmt: "%s-%s-subnet"
@@ -231,7 +231,7 @@ spec:
             fromFieldPath: Required
         - type: PatchSet
           patchSetName: common-parameters
-        - fromFieldPath: spec.private-subnet-2-cidrBlock
+        - fromFieldPath: spec.subnets.private-2.cidrBlock
           toFieldPath: spec.forProvider.cidrBlock
         - type: CombineFromComposite
           combine:
@@ -304,7 +304,7 @@ spec:
           combine:
             variables:
               - fromFieldPath: metadata.name
-              - fromFieldPath: spec.public-subnet-name
+              - fromFieldPath: spec.subnets.public.name
             strategy: string
             string:
               fmt: "%s-%s-subnet"
@@ -355,7 +355,7 @@ spec:
           combine:
             variables:
               - fromFieldPath: metadata.name
-              - fromFieldPath: spec.public-subnet-name
+              - fromFieldPath: spec.subnets.public.name
             strategy: string
             string:
               fmt: "%s-%s-subnet"
@@ -403,7 +403,7 @@ spec:
           combine:
             variables:
               - fromFieldPath: metadata.name
-              - fromFieldPath: spec.private-subnet-1-name
+              - fromFieldPath: spec.subnets.private-1.name
             strategy: string
             string:
               fmt: "%s-%s-subnet"
@@ -450,7 +450,7 @@ spec:
           combine:
             variables:
               - fromFieldPath: metadata.name
-              - fromFieldPath: spec.private-subnet-2-name
+              - fromFieldPath: spec.subnets.private-2.name
             strategy: string
             string:
               fmt: "%s-%s-subnet"
@@ -546,6 +546,12 @@ spec:
           toFieldPath: spec.forProvider.version
         - fromFieldPath: metadata.name
           toFieldPath: metadata.labels.type
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-cluster"
+        - fromFieldPath: metadata.name
+          toFieldPath: metadata.name
           transforms:
             - type: string
               string:
