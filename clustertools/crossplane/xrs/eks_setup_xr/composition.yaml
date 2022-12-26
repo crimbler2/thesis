@@ -551,7 +551,7 @@ spec:
               string:
                 fmt: "%s-cluster"
         - fromFieldPath: metadata.name
-          toFieldPath: metadata.name
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
           transforms:
             - type: string
               string:
