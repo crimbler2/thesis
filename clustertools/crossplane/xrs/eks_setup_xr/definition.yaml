@@ -87,6 +87,22 @@ spec:
                           description: AZ for private subnet 1
                           enum: ["a", "b", "c"]
                           default: "a"
+                    private-2:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: Name for private subnet 1
+                          default: "private-2"
+                        cidrBlock:
+                          type: string
+                          description: CIDR block for private subnet 1
+                          default: "10.19.2.0/24"
+                        availabilityZone:
+                          type: string
+                          description: AZ for private subnet 1
+                          enum: ["a", "b", "c"]
+                          default: "b"
 
               required:
                     - region

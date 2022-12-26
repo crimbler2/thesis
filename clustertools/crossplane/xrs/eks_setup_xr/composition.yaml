@@ -237,14 +237,14 @@ spec:
           combine:
             variables:
               - fromFieldPath: spec.region
-              - fromFieldPath: spec.private-subnet-2-availabilityZone
+              - fromFieldPath: spec.subnets.private-2.availabilityZone
             strategy: string
             string:
               fmt: "%s%s"
           toFieldPath: spec.forProvider.availabilityZone
           policy:
             fromFieldPath: Required
-        - fromFieldPath: spec.private-subnet-2-availabilityZone
+        - fromFieldPath: spec.subnets.private-2.availabilityZone
           toFieldPath: metadata.labels.zone
 
     - name: elastic-ip
