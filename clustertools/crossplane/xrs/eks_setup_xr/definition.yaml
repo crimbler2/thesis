@@ -56,55 +56,46 @@ spec:
                   type: object
                   properties:
                     public:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                          description: Name for public subnet
-                          default: "public"
-                        cidrBlock:
-                          type: string
-                          description: CIDR block for public subnet
-                          default: "10.19.0.0/24"
-                        availabilityZone:
-                          type: string
-                          description: AZ for public subnet
-                          enum: ["a", "b", "c"]
-                          default: "a"
+                      $ref: '#/components/schemas/subnet'
                     private-1:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                          description: Name for private subnet 1
-                          default: "private-1"
-                        cidrBlock:
-                          type: string
-                          description: CIDR block for private subnet 1
-                          default: "10.19.1.0/24"
-                        availabilityZone:
-                          type: string
-                          description: AZ for private subnet 1
-                          enum: ["a", "b", "c"]
-                          default: "a"
+                      $ref: '#/components/schemas/subnet'
                     private-2:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                          description: Name for private subnet 1
-                          default: "private-2"
-                        cidrBlock:
-                          type: string
-                          description: CIDR block for private subnet 1
-                          default: "10.19.2.0/24"
-                        availabilityZone:
-                          type: string
-                          description: AZ for private subnet 1
-                          enum: ["a", "b", "c"]
-                          default: "b"
+                      $ref: '#/components/schemas/subnet'
+                    default:
+                      public:
+                        name: "public"
+                        cidrBlock: "10.19.0.0/24"
+                        availabilityZone: "a"
+                      private-1:
+                        name: "private-1"
+                        cidrBlock: "10.19.1.0/24"
+                        availabilityZone: "a"
+                      private-2:
+                        name: "private-2"
+                        cidrBlock: "10.19.2.0/24"
+                        availabilityZone: "b"
 
               required:
                     - region
                     - k8s-version
                     - providerConfigRef
+
+          components:
+            schemas:
+              subnet:
+                type: object
+                required:
+                  - name
+                  - cidrBlock
+                  - availabilityZone
+                properties:
+                  name:
+                    type: string
+                    description: Name of the subnet
+                  cidrBlock:
+                    type: string
+                    description: CIDR block of the subnet
+                  availabilityZone:
+                    type: string
+                    description: Availability Zone of the subnet
+                    enum: ["a", "b", "c"]
