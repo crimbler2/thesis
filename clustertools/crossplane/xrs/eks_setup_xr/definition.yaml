@@ -56,11 +56,56 @@ spec:
                   type: object
                   properties:
                     public:
-                      $ref: '#/components/schemas/subnet'
+                      type: object
+                      required:
+                        - name
+                        - cidrBlock
+                        - availabilityZone
+                      properties:
+                        name:
+                          type: string
+                          description: Name of the subnet
+                        cidrBlock:
+                          type: string
+                          description: CIDR block of the subnet
+                        availabilityZone:
+                          type: string
+                          description: Availability Zone of the subnet
+                          enum: [ "a", "b", "c" ]
                     private-1:
-                      $ref: '#/components/schemas/subnet'
+                      type: object
+                      required:
+                        - name
+                        - cidrBlock
+                        - availabilityZone
+                      properties:
+                        name:
+                          type: string
+                          description: Name of the subnet
+                        cidrBlock:
+                          type: string
+                          description: CIDR block of the subnet
+                        availabilityZone:
+                          type: string
+                          description: Availability Zone of the subnet
+                          enum: [ "a", "b", "c" ]
                     private-2:
-                      $ref: '#/components/schemas/subnet'
+                      type: object
+                      required:
+                        - name
+                        - cidrBlock
+                        - availabilityZone
+                      properties:
+                        name:
+                          type: string
+                          description: Name of the subnet
+                        cidrBlock:
+                          type: string
+                          description: CIDR block of the subnet
+                        availabilityZone:
+                          type: string
+                          description: Availability Zone of the subnet
+                          enum: [ "a", "b", "c" ]
                     default:
                       public:
                         name: "public"
@@ -79,23 +124,3 @@ spec:
                     - region
                     - k8s-version
                     - providerConfigRef
-
-          components:
-            schemas:
-              subnet:
-                type: object
-                required:
-                  - name
-                  - cidrBlock
-                  - availabilityZone
-                properties:
-                  name:
-                    type: string
-                    description: Name of the subnet
-                  cidrBlock:
-                    type: string
-                    description: CIDR block of the subnet
-                  availabilityZone:
-                    type: string
-                    description: Availability Zone of the subnet
-                    enum: ["a", "b", "c"]
