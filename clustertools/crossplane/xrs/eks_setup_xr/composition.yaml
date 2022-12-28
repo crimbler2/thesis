@@ -741,21 +741,21 @@ spec:
         apiVersion: kubernetes.crossplane.io/v1alpha1
         kind: Object
         spec:
-          references:
-            # Use dependsOn to wait for the cluster connection secret to exist
-            - dependsOn:
-                apiVersion: v1
-                kind: Secret
-                name: # patched
-                namespace: crossplane-system
-            # get server directly from connection secret
-            - patchesFrom:
-                apiVersion: v1
-                kind: Secret
-                name: # patched
-                namespace: crossplane-system
-                fieldPath: data.endpoint
-              toFieldPath: data.server
+          # references:
+          #   # Use dependsOn to wait for the cluster connection secret to exist
+          #   - dependsOn:
+          #       apiVersion: v1
+          #       kind: Secret
+          #       name: # patched
+          #       namespace: crossplane-system
+          #   # get server directly from connection secret
+          #   - patchesFrom:
+          #       apiVersion: v1
+          #       kind: Secret
+          #       name: # patched
+          #       namespace: crossplane-system
+          #       fieldPath: data.endpoint
+          #     toFieldPath: data.server
           forProvider:
             manifest:
               apiVersion: v1
@@ -774,24 +774,31 @@ spec:
             - type: string
               string:
                 fmt: "%s-argocd-cluster-secret"
-        - fromFieldPath: metadata.name
-          toFieldPath: spec.references[0].dependsOn.name
-          transforms:
-            - type: string
-              string:
-                fmt: "%s-cluster-connection"
-        - fromFieldPath: metadata.name
-          toFieldPath: spec.references[1].patchesFrom.name
-          transforms:
-            - type: string
-              string:
-                fmt: "%s-cluster-connection"
+        # - fromFieldPath: metadata.name
+        #   toFieldPath: spec.references[0].dependsOn.name
+        #   transforms:
+        #     - type: string
+        #       string:
+        #         fmt: "%s-cluster-connection"
+        # - fromFieldPath: metadata.name
+        #   toFieldPath: spec.references[1].patchesFrom.name
+        #   transforms:
+        #     - type: string
+        #       string:
+        #         fmt: "%s-cluster-connection"
         - fromFieldPath: metadata.name
           toFieldPath: spec.forProvider.manifest.data.name
           transforms:
             - type: string
               string:
                 fmt: "%s-cluster"
+        - fromFieldPath: status.clusterEndpoint
+          toFieldPath: spec.forProvider.manifest.data.server
+          transforms:
+            - type: string
+              string:
+                type: Convert
+                convert: ToBase64
         - type: CombineFromComposite
           combine:
             variables:
