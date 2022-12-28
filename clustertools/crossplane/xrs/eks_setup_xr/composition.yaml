@@ -723,7 +723,9 @@ spec:
             - type: string
               string:
                 fmt: "%s-node-role"
-    - base:
+
+    - name: argocd-secret
+      base:
         apiVersion: kubernetes.crossplane.io/v1alpha1
         kind: Object
         spec:
