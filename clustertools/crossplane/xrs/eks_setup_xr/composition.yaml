@@ -792,6 +792,10 @@ spec:
             - type: string
               string:
                 fmt: "%s-cluster"
+            - type: string
+              string:
+                type: Convert
+                convert: ToBase64
         - fromFieldPath: status.clusterEndpoint
           toFieldPath: spec.forProvider.manifest.data.server
           transforms:
