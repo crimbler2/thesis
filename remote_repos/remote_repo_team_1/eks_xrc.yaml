@@ -1,7 +1,7 @@
 apiVersion: thesis.io/v1alpha1
 kind: clusterSetup
 metadata:
-  name: crossplane-cluster
+  name: crossplane-thesis-env
   namespace: crossplane-system
 spec:
   providerConfigRef: aws-provider-config
