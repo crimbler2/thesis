@@ -736,11 +736,11 @@ spec:
         spec:
           references:
             # Use dependsOn to wait for the DB connection secret to exist
-            - dependsOn:
-                apiVersion: v1
-                kind: Secret
-                name: # patched
-                namespace: crossplane-system
+            # - dependsOn:
+            #     apiVersion: v1
+            #     kind: Secret
+            #     name: # patched
+            #     namespace: crossplane-system
             - patchesFrom:
                 apiVersion: v1
                 kind: Secret
