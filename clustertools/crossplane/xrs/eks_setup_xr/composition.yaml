@@ -734,20 +734,20 @@ spec:
         apiVersion: kubernetes.crossplane.io/v1alpha1
         kind: Object
         spec:
-          references:
+          #references:
             # Use dependsOn to wait for the DB connection secret to exist
             # - dependsOn:
             #     apiVersion: v1
             #     kind: Secret
             #     name: # patched
             #     namespace: crossplane-system
-            - patchesFrom:
-                apiVersion: v1
-                kind: Secret
-                name: # patched
-                namespace: crossplane-system
-                fieldPath: data
-              toFieldPath: metadata.connectionDetailsIntermediary
+            # - patchesFrom:
+            #     apiVersion: v1
+            #     kind: Secret
+            #     name: # patched
+            #     namespace: crossplane-system
+            #     fieldPath: data
+            #   toFieldPath: metadata.connectionDetailsIntermediary
           forProvider:
             manifest:
               apiVersion: v1
@@ -772,9 +772,9 @@ spec:
           #     - type: string
           #       string:
           #         fmt: "%s-cluster-connection"
-          - fromFieldPath: metadata.name
-            toFieldPath: spec.references[0].patchesFrom.name
-            transforms:
-              - type: string
-                string:
-                  fmt: "%s-cluster-connection"
+          # - fromFieldPath: metadata.name
+          #   toFieldPath: spec.references[0].patchesFrom.name
+          #   transforms:
+          #     - type: string
+          #       string:
+          #         fmt: "%s-cluster-connection"
