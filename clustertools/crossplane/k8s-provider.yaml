@@ -3,11 +3,15 @@ kind: ServiceAccount
 metadata:
   name: kubernetes-provider-sa
   namespace: crossplane-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "-92"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: kubernetes-provider-permissions
+  annotations:
+    argocd.argoproj.io/sync-wave: "-91"
 subjects:
   - kind: ServiceAccount
     name: kubernetes-provider-sa
