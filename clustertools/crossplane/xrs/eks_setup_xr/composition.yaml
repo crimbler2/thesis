@@ -538,7 +538,6 @@ spec:
               matchControllerRef: true
           writeConnectionSecretToRef:
             namespace: crossplane-system
-            name: ekscluster-connection
       patches:
         - type: PatchSet
           patchSetName: common-parameters
@@ -562,6 +561,12 @@ spec:
             - type: string
               string:
                 fmt: "%s-cluster-role"
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.writeConnectionSecretToRef.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-cluster-connection"
 
       connectionDetails:
         - name: cluster-ca
@@ -729,6 +734,20 @@ spec:
         apiVersion: kubernetes.crossplane.io/v1alpha1
         kind: Object
         spec:
+          references:
+            # Use dependsOn to wait for the DB connection secret to exist
+            - dependsOn:
+                apiVersion: v1
+                kind: Secret
+                name: # patched
+                namespace: crossplane-system
+            - patchesFrom:
+                apiVersion: v1
+                kind: Secret
+                name: # patched
+                namespace: crossplane-system
+                fieldPath: data
+              toFieldPath: metadata.connectionDetailsIntermediary
           forProvider:
             manifest:
               apiVersion: v1
@@ -742,8 +761,20 @@ spec:
             name: kubernetes-provider-config
         patches:
           - fromFieldPath: metadata.name
-            toFieldPath: metadata.name
+            toFieldPath: spec.forProvider.manifest.metadata.name
             transforms:
               - type: string
                 string:
                   fmt: "%s-argocd-cluster-secret"
+          - fromFieldPath: metadata.name
+            toFieldPath: spec.references[0].dependsOn.name
+            transforms:
+              - type: string
+                string:
+                  fmt: "%s-cluster-connection"
+          - fromFieldPath: metadata.name
+            toFieldPath: spec.references[1].patchesFrom.name
+            transforms:
+              - type: string
+                string:
+                  fmt: "%s-cluster-connection"
