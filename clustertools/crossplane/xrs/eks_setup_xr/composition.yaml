@@ -567,6 +567,13 @@ spec:
             - type: string
               string:
                 fmt: "%s-cluster-connection"
+        - type: ToCompositeFieldPath
+          fromFieldPath: status.atProvider.certificateAuthorityData
+          toFieldPath: status.clusterCertificateAuthorityData
+        - type: ToCompositeFieldPath
+          fromFieldPath: status.atProvider.endpoint
+          toFieldPath: status.clusterEndpoint
+
 
       connectionDetails:
         - name: cluster-ca
@@ -735,19 +742,20 @@ spec:
         kind: Object
         spec:
           references:
-            # Use dependsOn to wait for the DB connection secret to exist
+            # Use dependsOn to wait for the cluster connection secret to exist
             - dependsOn:
                 apiVersion: v1
                 kind: Secret
                 name: # patched
                 namespace: crossplane-system
+            # get server directly from connection secret
             - patchesFrom:
                 apiVersion: v1
                 kind: Secret
                 name: # patched
                 namespace: crossplane-system
-                fieldPath: data
-              toFieldPath: data.connectionDetailsIntermediary
+                fieldPath: data.endpoint
+              toFieldPath: data.server
           forProvider:
             manifest:
               apiVersion: v1
@@ -778,3 +786,35 @@ spec:
             - type: string
               string:
                 fmt: "%s-cluster-connection"
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.manifest.data.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-cluster"
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: status.clusterCertificateAuthorityData
+              - fromFieldPath: metadata.name
+            strategy: string
+            # Here, our administratorLogin parameter and fullyQualifiedDomainName
+            # status are formatted to a single output string representing a DSN.
+            string:
+              fmt: |
+                {
+                  "tlsClientConfig":{
+                    "insecure":false,
+                    "caData":"%s"
+                  },
+                  "awsAuthConfig":{
+                    "clusterName":"%s-cluster",
+                    "roleARN":"arn:aws:iam::843588259092:role/thesis-sa"
+                  }
+                }
+          toFieldPath: spec.forProvider.manifest.data.config
+          transforms:
+            - type: string
+              string:
+                type: Convert
+                convert: ToBase64
