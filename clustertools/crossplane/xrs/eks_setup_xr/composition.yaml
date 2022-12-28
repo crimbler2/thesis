@@ -746,10 +746,10 @@ spec:
               apiVersion: v1
               kind: Secret
               metadata:
-                namespace: crossplane-system
+                namespace: argocd-system
+                labels:
+                  argocd.argoproj.io/secret-type: cluster
               type: Opaque
-              data:
-                USER_NAME: c3Bhc3QK
           providerConfigRef:
             name: kubernetes-provider-config
       patches:
