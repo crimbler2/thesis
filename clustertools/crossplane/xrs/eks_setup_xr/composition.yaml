@@ -738,6 +738,8 @@ spec:
               type: Opaque
               data:
                 USER_NAME: c3Bhc3QK
+          providerConfigRef:
+            name: kubernetes-provider
         patches:
           - fromFieldPath: metadata.name
             toFieldPath: metadata.name
