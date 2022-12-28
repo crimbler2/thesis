@@ -766,14 +766,14 @@ spec:
               - type: string
                 string:
                   fmt: "%s-argocd-cluster-secret"
+          # - fromFieldPath: metadata.name
+          #   toFieldPath: spec.references[0].dependsOn.name
+          #   transforms:
+          #     - type: string
+          #       string:
+          #         fmt: "%s-cluster-connection"
           - fromFieldPath: metadata.name
-            toFieldPath: spec.references[0].dependsOn.name
-            transforms:
-              - type: string
-                string:
-                  fmt: "%s-cluster-connection"
-          - fromFieldPath: metadata.name
-            toFieldPath: spec.references[1].patchesFrom.name
+            toFieldPath: spec.references[0].patchesFrom.name
             transforms:
               - type: string
                 string:
