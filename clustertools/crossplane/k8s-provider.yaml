@@ -30,7 +30,7 @@ metadata:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/sync-wave: "-90"
 spec:
-  serviceAccountName: crossplane-provider-kubernetes
+  serviceAccountName: kubernetes-provider-sa
 ---
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
@@ -40,7 +40,7 @@ metadata:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/sync-wave: "-80"
 spec:
-  package: crossplane/provider-kubernetes:main
+  package: crossplane/provider-kubernetes:v0.4.1
   controllerConfigRef:
     name: kubernetes-controller-config
 ---
