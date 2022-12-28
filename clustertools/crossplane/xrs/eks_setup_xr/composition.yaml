@@ -773,7 +773,7 @@ spec:
               string:
                 fmt: "%s-cluster-connection"
         - fromFieldPath: metadata.name
-          toFieldPath: spec.references[0].patchesFrom.name
+          toFieldPath: spec.references[1].patchesFrom.name
           transforms:
             - type: string
               string:
