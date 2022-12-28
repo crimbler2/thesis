@@ -739,7 +739,7 @@ spec:
               data:
                 USER_NAME: c3Bhc3QK
           providerConfigRef:
-            name: kubernetes-provider
+            name: kubernetes-provider-config
         patches:
           - fromFieldPath: metadata.name
             toFieldPath: metadata.name
