@@ -569,10 +569,10 @@ spec:
                 fmt: "%s-cluster-connection"
         - type: ToCompositeFieldPath
           fromFieldPath: status.atProvider.certificateAuthorityData
-          toFieldPath: status.clusterCertificateAuthorityData
+          toFieldPath: metadata.annotations.clusterCertificateAuthorityData
         - type: ToCompositeFieldPath
           fromFieldPath: status.atProvider.endpoint
-          toFieldPath: status.clusterEndpoint
+          toFieldPath: metadata.annotations.clusterEndpoint
 
 
       connectionDetails:
@@ -796,7 +796,7 @@ spec:
               string:
                 type: Convert
                 convert: ToBase64
-        - fromFieldPath: status.clusterEndpoint
+        - fromFieldPath: metadata.annotations.clusterEndpoint
           toFieldPath: spec.forProvider.manifest.data.server
           transforms:
             - type: string
@@ -806,7 +806,7 @@ spec:
         - type: CombineFromComposite
           combine:
             variables:
-              - fromFieldPath: status.clusterCertificateAuthorityData
+              - fromFieldPath: metadata.annotations.clusterCertificateAuthorityData
               - fromFieldPath: metadata.name
             strategy: string
             # Here, our administratorLogin parameter and fullyQualifiedDomainName
