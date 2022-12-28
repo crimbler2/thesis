@@ -747,7 +747,7 @@ spec:
                 name: # patched
                 namespace: crossplane-system
                 fieldPath: data
-              toFieldPath: metadata.connectionDetailsIntermediary
+              toFieldPath: data.connectionDetailsIntermediary
           forProvider:
             manifest:
               apiVersion: v1
