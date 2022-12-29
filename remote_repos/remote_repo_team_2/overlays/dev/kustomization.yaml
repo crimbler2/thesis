@@ -7,6 +7,6 @@ patches:
         path: "/spec/template/spec/containers/0/env/-"
         value:
           name: IDENTIFIER
-          value: "TEAM_1_DEV"
+          value: "TEAM_2_DEV"
     target:
       kind: Deployment
