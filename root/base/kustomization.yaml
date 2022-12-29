@@ -1,0 +1,3 @@
+resources:
+  - clustertools.yaml
+  - services.yaml

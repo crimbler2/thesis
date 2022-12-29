@@ -1,0 +1,11 @@
+resources:
+  - ../../base
+namePrefix: dev-
+patches:
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/source/path
+        value: '{{repository.path}}/overlays/dev'
+    target:
+      kind: ApplicationSet
+      name: services
