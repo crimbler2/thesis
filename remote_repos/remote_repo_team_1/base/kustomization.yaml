@@ -1,0 +1,6 @@
+namePrefix: team-1-
+commonLabels:
+  tenant: team-1
+resources:
+  - deployment.yaml
+  - service.yaml

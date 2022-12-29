@@ -1,0 +1,9 @@
+namePrefix: team-1-
+commonLabels:
+  tenant: team-1
+resources:
+  - deployment.yaml
+  - eks_xrc.yaml
+  - service.yaml
+  - external-secret.yaml
+  - secret-store.yaml

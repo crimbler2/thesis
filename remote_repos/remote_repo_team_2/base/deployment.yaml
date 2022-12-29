@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: environment-server
+  labels:
+    app: environment-server
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: environment-server
+  template:
+    metadata:
+      labels:
+        app: environment-server
+    spec:
+      containers:
+        - name: environment-server
+          image: crimbler2/environment-server:0.0.1
+          env: []
+          ports:
+            - containerPort: 80

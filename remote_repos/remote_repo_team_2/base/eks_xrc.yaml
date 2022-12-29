@@ -1,0 +1,9 @@
+apiVersion: thesis.io/v1alpha1
+kind: clusterSetup
+metadata:
+  name: crossplane-cluster
+  namespace: crossplane-system
+spec:
+  providerConfigRef: aws-provider-config
+  region: eu-central-1
+  k8s-version: "1.24"
