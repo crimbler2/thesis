@@ -1,6 +1,6 @@
-namePrefix: team-1-
+namePrefix: team-2-
 commonLabels:
-  tenant: team-1
+  tenant: team-2
 resources:
   - deployment.yaml
   - eks_xrc.yaml
