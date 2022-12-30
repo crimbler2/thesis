@@ -736,7 +736,7 @@ spec:
               string:
                 fmt: "%snode-role"
 
-    - name: remote-cluster-argocd-connection-secret
+    - name: argocd-secret-remote-cluster-credentials
       base:
         apiVersion: kubernetes.crossplane.io/v1alpha1
         kind: Object
@@ -751,7 +751,7 @@ spec:
                   argocd.argoproj.io/secret-type: cluster
               type: Opaque
           providerConfigRef:
-            name: kubernetes-provider-config
+            name: kubernetes-provider-local-config
       patches:
         - fromFieldPath: metadata.generateName
           toFieldPath: spec.forProvider.manifest.metadata.name
@@ -870,7 +870,7 @@ spec:
                 fmt: "%shelm-provider-config"
     - name: remote-cluster-kubernetes-provider-config
       base:
-        apiVersion: kubernetes.crossplane.io/v1beta1
+        apiVersion: kubernetes.crossplane.io/v1alpha1
         kind: ProviderConfig
         spec:
           credentials:
@@ -884,7 +884,7 @@ spec:
           transforms:
             - type: string
               string:
-                fmt: "%skubernetes-provider-config"
+                fmt: "kubernetes-provider%s-config"
         # This ProviderConfig uses the above EKSCluster's connection secret as
         # its credentials secret.
         - fromFieldPath: metadata.generateName
@@ -911,8 +911,6 @@ spec:
               data:
                 type: git
               type: Opaque
-          providerConfigRef:
-            name: kubernetes-provider-config
       patches:
         - fromFieldPath: metadata.generateName
           toFieldPath: metadata.name
@@ -933,3 +931,9 @@ spec:
               string:
                 type: Convert
                 convert: ToBase64
+        - fromFieldPath: metadata.generateName
+          toFieldPath: spec.providerConfigRef.name
+          transforms:
+            - type: string
+              string:
+                fmt: "kubernetes-provider%s-config"
