@@ -951,7 +951,135 @@ spec:
             thumbprintList:
               - "9e99a48a9960b14926bb7f3b02e22da2b0ab7280"
       patches:
-        - fromFieldPath: status.eks.oidc
+        - fromFieldPath: status.eks.oidcProvider
           toFieldPath: spec.forProvider.url
           policy:
             fromFieldPath: Required
+
+    - name: remote-cluster-external-secrets-irsa-role
+      base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: Role
+        spec:
+          forProvider:
+            tags:
+              - key: name
+      patches:
+        - type: PatchSet
+          patchSetName: common-parameters
+        - fromFieldPath: metadata.generateName
+          toFieldPath: metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%sexternal-secrets-irsa-role"
+        - fromFieldPath: metadata.generateName
+          toFieldPath: metadata.labels.role
+          transforms:
+            - type: string
+              string:
+                fmt: "%sexternal-secrets-irsa-role"
+        - fromFieldPath: metadata.generateName
+          toFieldPath: spec.forProvider.tags[0].value
+          transforms:
+            - type: string
+              string:
+                fmt: "%sexternal-secrets-irsa-role"
+        - fromFieldPath: status.eks.oidcProvider
+          toFieldPath: spec.forProvider.assumeRolePolicyDocument
+          transforms:
+            - type: string
+              string:
+                fmt:  |
+                  {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Sid": "",
+                        "Effect": "Allow",
+                        "Principal": {
+                          "Federated": "arn:aws:iam::843588259092:%s"
+                        },
+                        "Action": "sts:AssumeRoleWithWebIdentity",
+                        "Condition": {
+                          "StringLike": {
+                            "%s:sub":
+                              "system:serviceaccount:external-secrets-system:*"
+                          }
+                        }
+                      }
+                    ]
+                  }
+
+    - name: remote-cluster-external-secrets-irsa-policy
+      base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: Policy
+        spec:
+          forProvider:
+            document: |
+              {
+                  "Statement": [
+                      {
+                          "Action": [
+                              "secretsmanager:GetResourcePolicy",
+                              "secretsmanager:GetSecretValue",
+                              "secretsmanager:DescribeSecret",
+                              "secretsmanager:ListSecretVersionIds"
+                          ],
+                          "Effect": "Allow",
+                          "Resource": "arn:aws:secretsmanager:eu-central-1:843588259092:secret:*"
+                      }
+                  ],
+                  "Version": "2012-10-17"
+              }
+            tags:
+              - key: name
+      patches:
+        - type: PatchSet
+          patchSetName: common-parameters
+        - fromFieldPath: metadata.generateName
+          toFieldPath: metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%sexternal-secrets-irsa-policy"
+        - fromFieldPath: metadata.generateName
+          toFieldPath: metadata.labels.role
+          transforms:
+            - type: string
+              string:
+                fmt: "%sexternal-secrets-irsa-policy"
+        - fromFieldPath: metadata.generateName
+          toFieldPath: spec.forProvider.tags[0].value
+          transforms:
+            - type: string
+              string:
+                fmt: "%sexternal-secrets-irsa-policy"
+
+    - name: remote-cluster-external-secrets-irsa-rolepolicyattachment
+      base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: RolePolicyAttachment
+        spec:
+          forProvider:
+            policyArn: "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+            roleNameSelector:
+              matchControllerRef: true
+            policyArnSelector:
+              matchControllerRef: true
+      patches:
+        - type: PatchSet
+          patchSetName: common-parameters
+        - fromFieldPath: metadata.generateName
+          toFieldPath: spec.forProvider.roleNameSelector.matchLabels.role
+          transforms:
+            - type: string
+              string:
+                fmt: "%sexternal-secrets-irsa-role"
+        - fromFieldPath: metadata.generateName
+          toFieldPath: spec.forProvider.policyArnSelector.matchLabels.role
+          transforms:
+            - type: string
+              string:
+                fmt: "%sexternal-secrets-irsa-policy"
