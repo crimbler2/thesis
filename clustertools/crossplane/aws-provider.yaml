@@ -9,6 +9,8 @@ metadata:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/sync-wave: "-90"
 spec:
+  args:
+    - --max-reconcile-rate=100
   podSecurityContext:
     fsGroup: 2000
 ---
