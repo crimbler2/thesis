@@ -813,6 +813,10 @@ spec:
       patches:
         - fromFieldPath: metadata.generateName
           toFieldPath: metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%helm-provider-config"
         # This ProviderConfig uses the above EKSCluster's connection secret as
         # its credentials secret.
         - fromFieldPath: metadata.generateName
@@ -860,3 +864,7 @@ spec:
       patches:
         - fromFieldPath: metadata.generateName
           toFieldPath: spec.providerConfigRef.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%helm-provider-config"
