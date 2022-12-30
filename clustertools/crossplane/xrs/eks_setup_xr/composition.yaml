@@ -736,7 +736,7 @@ spec:
               string:
                 fmt: "%snode-role"
 
-    - name: remote-cluster-argocd-secret
+    - name: remote-cluster-argocd-connection-secret
       base:
         apiVersion: kubernetes.crossplane.io/v1alpha1
         kind: Object
@@ -895,7 +895,7 @@ spec:
                 fmt: "%scluster-connection"
       readinessChecks:
         - type: None
-    - name: remote-cluster-argocd-secret
+    - name: remote-cluster-argocd-secret-root-repo
       base:
         apiVersion: kubernetes.crossplane.io/v1alpha1
         kind: Object
