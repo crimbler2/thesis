@@ -51,6 +51,12 @@ spec:
                 rootRepo:
                   description: Repository of the root ArgoCD Configuration
                   type: string
+                rootRepoUrl:
+                  description: Repository of the root ArgoCD Configuration
+                  type: string
+                rootRepoPath:
+                  description: Folder path to the root ArgoCD Configuration
+                  type: string
 
 
                 vpc-cidrBlock:
