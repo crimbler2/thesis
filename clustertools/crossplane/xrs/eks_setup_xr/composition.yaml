@@ -837,10 +837,10 @@ spec:
         spec:
           forProvider:
             chart:
-              name: argocd
+              name: argo-cd
               repository: https://argoproj.github.io/argo-helm
               version: 5.6.2
-            namespace: default
+            namespace: argocd-system
             values:
               server:
                 service:
