@@ -127,9 +127,3 @@ spec:
                   type: object
                   x-kubernetes-preserve-unknown-fields: true
               type: object
-
-              required:
-                    - region
-                    - k8s-version
-                    - rootRepo
-                    - providerConfigRef
