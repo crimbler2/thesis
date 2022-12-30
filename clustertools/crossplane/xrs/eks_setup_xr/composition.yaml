@@ -1,7 +1,7 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: aws-eks-cluster
+  name: eks-cluster-setup
   labels:
     provider: aws
     service: eks
