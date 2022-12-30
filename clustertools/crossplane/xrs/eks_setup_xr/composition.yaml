@@ -800,3 +800,61 @@ spec:
               string:
                 type: Convert
                 convert: ToBase64
+    - base:
+        apiVersion: helm.crossplane.io/v1beta1
+        kind: ProviderConfig
+        spec:
+          credentials:
+            source: Secret
+            secretRef:
+              namespace: crossplane-system
+              key: kubeconfig
+      patches:
+        - fromFieldPath: metadata.name
+          toFieldPath: metadata.name
+        # This ProviderConfig uses the above EKSCluster's connection secret as
+        # its credentials secret.
+        - fromFieldPath: "metadata.name"
+          toFieldPath: spec.credentials.secretRef.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-cluster-connection"
+      readinessChecks:
+        - type: None
+    - base:
+        apiVersion: helm.crossplane.io/v1beta1
+        kind: Release
+        metadata:
+          annotations:
+            crossplane.io/external-name: argocd
+        spec:
+          forProvider:
+            chart:
+              name: argocd
+              repository: https://argoproj.github.io/argo-helm
+              version: 5.6.2
+            namespace: default
+            values:
+              server:
+                service:
+                  type: LoadBalancer
+                  annotations:
+                    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+                # change security context to 999 according to: https://www.modulo2.nl/blog/argocd-on-aws-with-multiple-clusters
+                securityContext:
+                  fsGroup: 999
+              controller:
+                # change security context to 999 according to: https://www.modulo2.nl/blog/argocd-on-aws-with-multiple-clusters
+                securityContext:
+                  fsGroup: 999
+              configs:
+                secret:
+                  argocdServerAdminPassword: $2a$12$IRs7lU0wuPtsG76OsHWS8ONpyVymvHQeOR3wKZR.nUcx0PkIiZw62
+                cm:
+                  "application.instanceLabelKey": argocd.argoproj.io/tracking-id
+              crds:
+                keep: false
+      patches:
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.providerConfigRef.name
