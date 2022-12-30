@@ -573,6 +573,9 @@ spec:
         - type: ToCompositeFieldPath
           fromFieldPath: status.atProvider.endpoint
           toFieldPath: status.eks.clusterEndpoint
+        - type: ToCompositeFieldPath
+          fromFieldPath: status.atProvider.identity.oidc.issuer
+          toFieldPath: status.eks.oidcProvider
 
 
       connectionDetails:
@@ -937,3 +940,18 @@ spec:
             - type: string
               string:
                 fmt: "kubernetes-provider%s-config"
+    - name: remote-cluster-oidc-provider
+      base:
+        apiVersion: identity.aws.crossplane.io/v1alpha1
+        kind: OpenIDConnectProvider
+        spec:
+          forProvider:
+            clientIDList:
+              - sts.amazonaws.com
+            thumbprintList:
+              - "9e99a48a9960b14926bb7f3b02e22da2b0ab7280"
+      patches:
+        - fromFieldPath: status.eks.oidc
+          toFieldPath: spec.forProvider.url
+          policy:
+            fromFieldPath: Required
