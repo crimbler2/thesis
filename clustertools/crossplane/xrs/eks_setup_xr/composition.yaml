@@ -908,6 +908,7 @@ spec:
               apiVersion: v1
               kind: Secret
               metadata:
+                name: root-repo
                 namespace: argocd-system
                 labels:
                   argocd.argoproj.io/secret-type: repository
@@ -920,13 +921,7 @@ spec:
           transforms:
             - type: string
               string:
-                fmt: "%s-argocd-root-repo-secret"
-        - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.manifest.metadata.name
-          transforms:
-            - type: string
-              string:
-                fmt: "root-repo"
+                fmt: "%sargocd-root-repo-secret"
         - fromFieldPath: spec.rootRepo
           toFieldPath: spec.forProvider.manifest.data.url
           transforms:
@@ -1010,6 +1005,8 @@ spec:
                       }
                     ]
                   }
+          policy:
+            fromFieldPath: Required
 
     - name: remote-cluster-external-secrets-irsa-policy
       base:
