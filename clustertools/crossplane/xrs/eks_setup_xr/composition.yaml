@@ -40,12 +40,12 @@ spec:
           patchSetName: common-parameters
         - fromFieldPath: spec.vpc-cidrBlock
           toFieldPath: spec.forProvider.cidrBlock
-        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.forProvider.tags[0].value
           transforms:
             - type: string
               string:
-                fmt: "%s-vpc"
+                fmt: "%svpc"
 
     - name: internetgateway
       base:
@@ -60,18 +60,18 @@ spec:
       patches:
         - type: PatchSet
           patchSetName: common-parameters
-        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.forProvider.tags[0].value
           transforms:
             - type: string
               string:
-                fmt: "%s-igw"
-        - fromFieldPath: metadata.name
+                fmt: "%sigw"
+        - fromFieldPath: metadata.generateName
           toFieldPath: metadata.labels.type
           transforms:
             - type: string
               string:
-                fmt: "%s-igw"
+                fmt: "%sigw"
 
     - name: subnet-public-1
       base:
@@ -94,7 +94,7 @@ spec:
         - type: CombineFromComposite
           combine:
             variables:
-              - fromFieldPath: metadata.name
+              - fromFieldPath: metadata.generateName
               - fromFieldPath: spec.subnets.public.name
             strategy: string
             string:
@@ -105,7 +105,7 @@ spec:
         - type: CombineFromComposite
           combine:
             variables:
-              - fromFieldPath: metadata.name
+              - fromFieldPath: metadata.generateName
               - fromFieldPath: spec.subnets.public.name
             strategy: string
             string:
@@ -152,7 +152,7 @@ spec:
         - type: CombineFromComposite
           combine:
             variables:
-              - fromFieldPath: metadata.name
+              - fromFieldPath: metadata.generateName
               - fromFieldPath: spec.subnets.private-1.name
             strategy: string
             string:
@@ -163,7 +163,7 @@ spec:
         - type: CombineFromComposite
           combine:
             variables:
-              - fromFieldPath: metadata.name
+              - fromFieldPath: metadata.generateName
               - fromFieldPath: spec.subnets.private-1.name
             strategy: string
             string:
@@ -210,7 +210,7 @@ spec:
         - type: CombineFromComposite
           combine:
             variables:
-              - fromFieldPath: metadata.name
+              - fromFieldPath: metadata.generateName
               - fromFieldPath: spec.subnets.private-2.name
             strategy: string
             string:
@@ -221,7 +221,7 @@ spec:
         - type: CombineFromComposite
           combine:
             variables:
-              - fromFieldPath: metadata.name
+              - fromFieldPath: metadata.generateName
               - fromFieldPath: spec.subnets.private-2.name
             strategy: string
             string:
@@ -259,18 +259,18 @@ spec:
       patches:
         - type: PatchSet
           patchSetName: common-parameters
-        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.forProvider.tags[0].value
           transforms:
             - type: string
               string:
-                fmt: "%s-ngw-eip"
-        - fromFieldPath: metadata.name
+                fmt: "%sngw-eip"
+        - fromFieldPath: metadata.generateName
           toFieldPath: metadata.labels.type
           transforms:
             - type: string
               string:
-                fmt: "%s-ngw-eip"
+                fmt: "%sngw-eip"
 
     - name: natgateway
       base:
@@ -288,22 +288,22 @@ spec:
       patches:
         - type: PatchSet
           patchSetName: common-parameters
-        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.forProvider.tags[0].value
           transforms:
             - type: string
               string:
-                fmt: "%s-ngw"
-        - fromFieldPath: metadata.name
+                fmt: "%sngw"
+        - fromFieldPath: metadata.generateName
           toFieldPath: metadata.labels.type
           transforms:
             - type: string
               string:
-                fmt: "%s-ngw"
+                fmt: "%sngw"
         - type: CombineFromComposite
           combine:
             variables:
-              - fromFieldPath: metadata.name
+              - fromFieldPath: metadata.generateName
               - fromFieldPath: spec.subnets.public.name
             strategy: string
             string:
@@ -311,12 +311,12 @@ spec:
           toFieldPath: spec.forProvider.subnetIdSelector.matchLabels.type
           policy:
             fromFieldPath: Required
-        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.forProvider.allocationIdSelector.matchLabels.type
           transforms:
             - type: string
               string:
-                fmt: "%s-ngw-eip"
+                fmt: "%sngw-eip"
 
     - name: routetable-public
       base:
@@ -338,23 +338,23 @@ spec:
         - type: CombineFromComposite
           combine:
             variables:
-              - fromFieldPath: metadata.name
+              - fromFieldPath: metadata.generateName
             strategy: string
             string:
-              fmt: "%s-public-route-table"
+              fmt: "%spublic-route-table"
           toFieldPath: spec.forProvider.tags[0].value
           policy:
             fromFieldPath: Required
-        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.forProvider.routes[0].gatewayIdSelector.matchLabels.type
           transforms:
             - type: string
               string:
-                fmt: "%s-igw"
+                fmt: "%sigw"
         - type: CombineFromComposite
           combine:
             variables:
-              - fromFieldPath: metadata.name
+              - fromFieldPath: metadata.generateName
               - fromFieldPath: spec.subnets.public.name
             strategy: string
             string:
@@ -386,23 +386,23 @@ spec:
         - type: CombineFromComposite
           combine:
             variables:
-              - fromFieldPath: metadata.name
+              - fromFieldPath: metadata.generateName
             strategy: string
             string:
-              fmt: "%s-private-route-table-1"
+              fmt: "%sprivate-route-table-1"
           toFieldPath: spec.forProvider.tags[0].value
           policy:
             fromFieldPath: Required
-        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.forProvider.routes[0].natGatewayIdSelector.matchLabels.type
           transforms:
             - type: string
               string:
-                fmt: "%s-ngw"
+                fmt: "%sngw"
         - type: CombineFromComposite
           combine:
             variables:
-              - fromFieldPath: metadata.name
+              - fromFieldPath: metadata.generateName
               - fromFieldPath: spec.subnets.private-1.name
             strategy: string
             string:
@@ -433,23 +433,23 @@ spec:
         - type: CombineFromComposite
           combine:
             variables:
-              - fromFieldPath: metadata.name
+              - fromFieldPath: metadata.generateName
             strategy: string
             string:
-              fmt: "%s-private-route-table-2"
+              fmt: "%sprivate-route-table-2"
           toFieldPath: spec.forProvider.tags[0].value
           policy:
             fromFieldPath: Required
-        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.forProvider.routes[0].natGatewayIdSelector.matchLabels.type
           transforms:
             - type: string
               string:
-                fmt: "%s-ngw"
+                fmt: "%sngw"
         - type: CombineFromComposite
           combine:
             variables:
-              - fromFieldPath: metadata.name
+              - fromFieldPath: metadata.generateName
               - fromFieldPath: spec.subnets.private-2.name
             strategy: string
             string:
@@ -484,24 +484,24 @@ spec:
       patches:
         - type: PatchSet
           patchSetName: common-parameters
-        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.generateName
           toFieldPath: metadata.labels.role
           transforms:
             - type: string
               string:
-                fmt: "%s-cluster-role"
-        - fromFieldPath: metadata.name
+                fmt: "%scluster-role"
+        - fromFieldPath: metadata.generateName
           toFieldPath: metadata.name
           transforms:
             - type: string
               string:
-                fmt: "%s-cluster-role"
-        - fromFieldPath: metadata.name
+                fmt: "%scluster-role"
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.forProvider.tags[0].value
           transforms:
             - type: string
               string:
-                fmt: "%s-cluster-role"
+                fmt: "%scluster-role"
 
     - name: cluster-policy
       base:
@@ -515,12 +515,12 @@ spec:
       patches:
         - type: PatchSet
           patchSetName: common-parameters
-        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.forProvider.roleNameSelector.matchLabels.role
           transforms:
             - type: string
               string:
-                fmt: "%s-cluster-role"
+                fmt: "%scluster-role"
 
     - name: eks-cluster
       base:
@@ -543,30 +543,30 @@ spec:
           patchSetName: common-parameters
         - fromFieldPath: spec.k8s-version
           toFieldPath: spec.forProvider.version
-        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.generateName
           toFieldPath: metadata.labels.type
           transforms:
             - type: string
               string:
-                fmt: "%s-cluster"
-        - fromFieldPath: metadata.name
+                fmt: "%scluster"
+        - fromFieldPath: metadata.generateName
           toFieldPath: metadata.annotations[crossplane.io/external-name]
           transforms:
             - type: string
               string:
-                fmt: "%s-cluster"
-        - fromFieldPath: metadata.name
+                fmt: "%scluster"
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.forProvider.roleArnSelector.matchLabels.role
           transforms:
             - type: string
               string:
-                fmt: "%s-cluster-role"
-        - fromFieldPath: metadata.name
+                fmt: "%scluster-role"
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.writeConnectionSecretToRef.name
           transforms:
             - type: string
               string:
-                fmt: "%s-cluster-connection"
+                fmt: "%scluster-connection"
         - type: ToCompositeFieldPath
           fromFieldPath: status.atProvider.certificateAuthorityData
           toFieldPath: metadata.annotations.clusterCertificateAuthorityData
@@ -604,24 +604,24 @@ spec:
       patches:
         - type: PatchSet
           patchSetName: common-parameters
-        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.forProvider.nodeRoleSelector.matchLabels.role
           transforms:
             - type: string
               string:
-                fmt: "%s-cluster-role"
-        - fromFieldPath: metadata.name
+                fmt: "%scluster-role"
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.forProvider.nodeRoleSelector.matchLabels.role
           transforms:
             - type: string
               string:
-                fmt: "%s-node-role"
-        - fromFieldPath: metadata.name
+                fmt: "%snode-role"
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.forProvider.clusterNameSelector.matchLabels.type
           transforms:
             - type: string
               string:
-                fmt: "%s-cluster"
+                fmt: "%scluster"
         - fromFieldPath: spec.k8s-version
           toFieldPath: spec.forProvider.version
         - fromFieldPath: spec.workers-size
@@ -660,24 +660,24 @@ spec:
       patches:
         - type: PatchSet
           patchSetName: common-parameters
-        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.generateName
           toFieldPath: metadata.labels.role
           transforms:
             - type: string
               string:
-                fmt: "%s-node-role"
-        - fromFieldPath: metadata.name
+                fmt: "%snode-role"
+        - fromFieldPath: metadata.generateName
           toFieldPath: metadata.name
           transforms:
             - type: string
               string:
-                fmt: "%s-node-role"
-        - fromFieldPath: metadata.name
+                fmt: "%snode-role"
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.forProvider.tags[0].value
           transforms:
             - type: string
               string:
-                fmt: "%s-node-role"
+                fmt: "%snode-role"
 
     - name: node-role-worker-policy
       base:
@@ -691,12 +691,12 @@ spec:
       patches:
         - type: PatchSet
           patchSetName: common-parameters
-        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.forProvider.roleNameSelector.matchLabels.role
           transforms:
             - type: string
               string:
-                fmt: "%s-node-role"
+                fmt: "%snode-role"
 
     - name: node-role-cni-policy
       base:
@@ -710,12 +710,12 @@ spec:
       patches:
         - type: PatchSet
           patchSetName: common-parameters
-        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.forProvider.roleNameSelector.matchLabels.role
           transforms:
             - type: string
               string:
-                fmt: "%s-node-role"
+                fmt: "%snode-role"
 
     - name: node-role-ecr-policy
       base:
@@ -729,12 +729,12 @@ spec:
       patches:
         - type: PatchSet
           patchSetName: common-parameters
-        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.forProvider.roleNameSelector.matchLabels.role
           transforms:
             - type: string
               string:
-                fmt: "%s-node-role"
+                fmt: "%snode-role"
 
     - name: remote-cluster-argocd-secret
       base:
@@ -753,18 +753,18 @@ spec:
           providerConfigRef:
             name: kubernetes-provider-config
       patches:
-        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.forProvider.manifest.metadata.name
           transforms:
             - type: string
               string:
-                fmt: "%s-argocd-cluster-secret"
-        - fromFieldPath: metadata.name
+                fmt: "%sargocd-cluster-secret"
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.forProvider.manifest.data.name
           transforms:
             - type: string
               string:
-                fmt: "%s-cluster"
+                fmt: "%scluster"
             - type: string
               string:
                 type: Convert
@@ -780,7 +780,7 @@ spec:
           combine:
             variables:
               - fromFieldPath: metadata.annotations.clusterCertificateAuthorityData
-              - fromFieldPath: metadata.name
+              - fromFieldPath: metadata.generateName
             strategy: string
             string:
               fmt: |
@@ -790,7 +790,7 @@ spec:
                     "caData":"%s"
                   },
                   "awsAuthConfig":{
-                    "clusterName":"%s-cluster",
+                    "clusterName":"%scluster",
                     "roleARN":"arn:aws:iam::843588259092:role/dev-thesis-sa"
                   }
                 }
@@ -811,16 +811,16 @@ spec:
               namespace: crossplane-system
               key: kubeconfig
       patches:
-        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.generateName
           toFieldPath: metadata.name
         # This ProviderConfig uses the above EKSCluster's connection secret as
         # its credentials secret.
-        - fromFieldPath: "metadata.name"
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.credentials.secretRef.name
           transforms:
             - type: string
               string:
-                fmt: "%s-cluster-connection"
+                fmt: "%scluster-connection"
       readinessChecks:
         - type: None
     - name: remote-cluster-argocd-installation
@@ -858,5 +858,5 @@ spec:
               crds:
                 keep: false
       patches:
-        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.generateName
           toFieldPath: spec.providerConfigRef.name
