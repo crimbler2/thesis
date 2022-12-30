@@ -1,5 +1,5 @@
 apiVersion: thesis.io/v1alpha1
-kind: clusterSetup
+kind: ClusterSetup
 metadata:
   name: dev-crossplane-cluster
   namespace: crossplane-system
