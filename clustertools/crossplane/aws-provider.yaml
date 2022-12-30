@@ -5,7 +5,7 @@ metadata:
   name: aws-controller-config
   namespace: crossplane-system
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::843588259092:role/dev-thesis-sa
+    eks.amazonaws.com/role-arn: arn:aws:iam::843588259092:role/thesis-sa
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/sync-wave: "-90"
 spec:
