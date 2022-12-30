@@ -6,4 +6,4 @@ metadata:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/sync-wave: "-80"
 spec:
-  package: crossplane/provider-helm:v0.12.0
+  package: crossplane/provider-helm:v0.11.1
