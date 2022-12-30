@@ -569,10 +569,10 @@ spec:
                 fmt: "%scluster-connection"
         - type: ToCompositeFieldPath
           fromFieldPath: status.atProvider.certificateAuthorityData
-          toFieldPath: metadata.annotations.clusterCertificateAuthorityData
+          toFieldPath: status.eks.clusterCertificateAuthorityData
         - type: ToCompositeFieldPath
           fromFieldPath: status.atProvider.endpoint
-          toFieldPath: metadata.annotations.clusterEndpoint
+          toFieldPath: status.eks.clusterEndpoint
 
 
       connectionDetails:
@@ -769,7 +769,7 @@ spec:
               string:
                 type: Convert
                 convert: ToBase64
-        - fromFieldPath: metadata.annotations.clusterEndpoint
+        - fromFieldPath: status.eks.clusterEndpoint
           toFieldPath: spec.forProvider.manifest.data.server
           transforms:
             - type: string
@@ -779,7 +779,7 @@ spec:
         - type: CombineFromComposite
           combine:
             variables:
-              - fromFieldPath: metadata.annotations.clusterCertificateAuthorityData
+              - fromFieldPath: status.eks.clusterCertificateAuthorityData
               - fromFieldPath: metadata.generateName
             strategy: string
             string:
