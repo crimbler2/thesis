@@ -122,7 +122,8 @@ spec:
               required:
                 - region
                 - k8s-version
-                - rootRepo
+                - rootRepoUrl
+                - rootRepoPath
                 - providerConfigRef
 
             status:

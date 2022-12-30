@@ -875,6 +875,47 @@ spec:
             - type: string
               string:
                 fmt: "%shelm-provider-config"
+    - name: remote-cluster-root-application
+      base:
+        apiVersion: helm.crossplane.io/v1beta1
+        kind: Release
+        metadata:
+          annotations:
+            crossplane.io/external-name: argocd-root-application
+        spec:
+          forProvider:
+            chart:
+              name: argocd-apps
+              repository: https://argoproj.github.io/argo-helm
+              version: 0.0.6
+            namespace: argocd-system
+            values:
+              applications:
+                - name: root
+                  namespace: argocd-system
+                  finalizers:
+                    - resources-finalizer.argocd.argoproj.io
+                  project: default
+                  source:
+                    targetRevision: HEAD
+                  destination:
+                    server: https://kubernetes.default.svc
+                    namespace: argocd-system
+                  syncPolicy:
+                    automated:
+                      prune: true
+                      selfHeal: true
+      patches:
+        - fromFieldPath: metadata.generateName
+          toFieldPath: spec.providerConfigRef.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%shelm-provider-config"
+        - fromFieldPath: spec.rootRepoUrl
+          toFieldPath: spec.forProvider.values.applications[0].source.repoUrl
+        - fromFieldPath: spec.rootRepoPath
+          toFieldPath: spec.forProvider.values.applications[0].source.repoPath
     - name: remote-cluster-kubernetes-provider-config
       base:
         apiVersion: kubernetes.crossplane.io/v1alpha1
@@ -926,7 +967,7 @@ spec:
             - type: string
               string:
                 fmt: "%sargocd-root-repo-secret"
-        - fromFieldPath: spec.rootRepo
+        - fromFieldPath: spec.rootRepoUrl
           toFieldPath: spec.forProvider.manifest.data.url
           transforms:
             - type: string
