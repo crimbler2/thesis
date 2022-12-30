@@ -816,7 +816,7 @@ spec:
           transforms:
             - type: string
               string:
-                fmt: "%helm-provider-config"
+                fmt: "%shelm-provider-config"
         # This ProviderConfig uses the above EKSCluster's connection secret as
         # its credentials secret.
         - fromFieldPath: metadata.generateName
@@ -867,4 +867,4 @@ spec:
           transforms:
             - type: string
               string:
-                fmt: "%helm-provider-config"
+                fmt: "%shelm-provider-config"
