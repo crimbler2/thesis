@@ -7,3 +7,4 @@ spec:
   providerConfigRef: aws-provider-config
   region: eu-central-1
   k8s-version: "1.24"
+  rootRepo: https://github.com/crimbler2/argocd-infrastructure-repo

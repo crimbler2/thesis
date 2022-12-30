@@ -868,3 +868,68 @@ spec:
             - type: string
               string:
                 fmt: "%shelm-provider-config"
+    - name: remote-cluster-kubernetes-provider-config
+      base:
+        apiVersion: kubernetes.crossplane.io/v1beta1
+        kind: ProviderConfig
+        spec:
+          credentials:
+            source: Secret
+            secretRef:
+              namespace: crossplane-system
+              key: kubeconfig
+      patches:
+        - fromFieldPath: metadata.generateName
+          toFieldPath: metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%skubernetes-provider-config"
+        # This ProviderConfig uses the above EKSCluster's connection secret as
+        # its credentials secret.
+        - fromFieldPath: metadata.generateName
+          toFieldPath: spec.credentials.secretRef.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%scluster-connection"
+      readinessChecks:
+        - type: None
+    - name: remote-cluster-argocd-secret
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha1
+        kind: Object
+        spec:
+          forProvider:
+            manifest:
+              apiVersion: v1
+              kind: Secret
+              metadata:
+                namespace: argocd-system
+                labels:
+                  argocd.argoproj.io/secret-type: repository
+              data:
+                type: git
+              type: Opaque
+          providerConfigRef:
+            name: kubernetes-provider-config
+      patches:
+        - fromFieldPath: metadata.generateName
+          toFieldPath: metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-argocd-root-repo-secret"
+        - fromFieldPath: metadata.generateName
+          toFieldPath: spec.forProvider.manifest.metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "root-repo"
+        - fromFieldPath: spec.rootRepo
+          toFieldPath: spec.forProvider.manifest.data.url
+          transforms:
+            - type: string
+              string:
+                type: Convert
+                convert: ToBase64

@@ -48,6 +48,9 @@ spec:
                   description: Geographic location of this Cluster Setup
                   type: string
                   enum: ["eu-central-1", "eu-west-1"]
+                rootRepo:
+                  description: Repository of the root ArgoCD Configuration
+                  type: string
 
 
                 vpc-cidrBlock:
@@ -114,4 +117,5 @@ spec:
               required:
                     - region
                     - k8s-version
+                    - rootRepo
                     - providerConfigRef
