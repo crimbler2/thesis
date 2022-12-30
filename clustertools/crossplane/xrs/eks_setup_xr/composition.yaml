@@ -791,7 +791,7 @@ spec:
                   },
                   "awsAuthConfig":{
                     "clusterName":"%s-cluster",
-                    "roleARN":"arn:aws:iam::843588259092:role/thesis-sa"
+                    "roleARN":"arn:aws:iam::843588259092:role/dev-thesis-sa"
                   }
                 }
           toFieldPath: spec.forProvider.manifest.data.config
