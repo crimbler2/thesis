@@ -994,7 +994,7 @@ spec:
         - fromFieldPath: status.eks.oidcProvider
           toFieldPath: spec.forProvider.url
           policy:
-            fromFieldPath: required
+            fromFieldPath: Required
 
 
     - name: remote-cluster-external-secrets-irsa-role
