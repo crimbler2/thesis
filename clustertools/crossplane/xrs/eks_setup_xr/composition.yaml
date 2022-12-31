@@ -993,8 +993,7 @@ spec:
       patches:
         - fromFieldPath: status.eks.oidcProvider
           toFieldPath: spec.forProvider.url
-          policy:
-            fromFieldPath: Required
+
 
     - name: remote-cluster-external-secrets-irsa-role
       base:
