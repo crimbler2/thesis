@@ -982,7 +982,7 @@ spec:
                 fmt: "kubernetes-provider%s-config"
     - name: remote-cluster-oidc-provider
       base:
-        apiVersion: identity.aws.crossplane.io/v1beta1
+        apiVersion: iam.aws.crossplane.io/v1beta1
         kind: OpenIDConnectProvider
         spec:
           forProvider:
@@ -993,6 +993,8 @@ spec:
       patches:
         - fromFieldPath: status.eks.oidcProvider
           toFieldPath: spec.forProvider.url
+          policy:
+            fromFieldPath: required
 
 
     - name: remote-cluster-external-secrets-irsa-role
