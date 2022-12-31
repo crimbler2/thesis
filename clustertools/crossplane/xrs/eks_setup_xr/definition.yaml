@@ -34,7 +34,7 @@ spec:
                 k8s-version:
                   description: Kubernetes version
                   type: string
-                  enum: ["1.20", "1.21", "1.22", "1.23", "1.24"]
+                  enum: [ "1.20", "1.21", "1.22", "1.23", "1.24" ]
                 workers-size:
                   description: Desired number of worker nodes in the cluster
                   type: integer
@@ -42,12 +42,12 @@ spec:
                 workload-type:
                   description: Type of workloads to be run on this cluster (GPU or non-GPU)"
                   type: string
-                  enum: ["gpu", "non-gpu"]
+                  enum: [ "gpu", "non-gpu" ]
                   default: "non-gpu"
                 region:
                   description: Geographic location of this Cluster Setup
                   type: string
-                  enum: ["eu-central-1", "eu-west-1"]
+                  enum: [ "eu-central-1", "eu-west-1" ]
                 rootRepo:
                   description: Repository of the root ArgoCD Configuration
                   type: string

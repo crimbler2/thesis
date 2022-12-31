@@ -1029,7 +1029,7 @@ spec:
           transforms:
             - type: string
               string:
-                fmt:  |
+                fmt: |
                   {
                     "Version": "2012-10-17",
                     "Statement": [

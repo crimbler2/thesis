@@ -17,6 +17,6 @@ spec:
       containers:
         - name: environment-server
           image: crimbler2/environment-server:0.0.1
-          env: []
+          env: [ ]
           ports:
             - containerPort: 80
