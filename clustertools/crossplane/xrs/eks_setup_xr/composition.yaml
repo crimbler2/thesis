@@ -23,6 +23,8 @@ spec:
           toFieldPath: spec.providerConfigRef.name
           policy:
             fromFieldPath: Required
+        - fromFieldPath: metadata.name
+          toFieldPath: metadata.labels.claim
 
   resources:
     - name: vpc
@@ -33,15 +35,13 @@ spec:
           forProvider:
             enableDnsSupport: true
             enableDnsHostNames: true
-            tags:
-              - key: Name
       patches:
         - type: PatchSet
           patchSetName: common-parameters
         - fromFieldPath: spec.vpc-cidrBlock
           toFieldPath: spec.forProvider.cidrBlock
         - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.tags[0].value
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
           transforms:
             - type: string
               string:
@@ -55,23 +55,19 @@ spec:
           forProvider:
             vpcIdSelector:
               matchControllerRef: true
-            tags:
-              - key: Name
+              matchLabels:
+                claim: # patched
       patches:
         - type: PatchSet
           patchSetName: common-parameters
         - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.tags[0].value
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
           transforms:
             - type: string
               string:
                 fmt: "%sigw"
-        - fromFieldPath: metadata.generateName
-          toFieldPath: metadata.labels.type
-          transforms:
-            - type: string
-              string:
-                fmt: "%sigw"
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.vpcIdSelector.matchLabels.claim
 
     - name: subnet-public-1
       base:
@@ -80,7 +76,6 @@ spec:
         metadata:
           labels:
             visibility: public
-            usage: k8s
         spec:
           forProvider:
             mapPublicIpOnLaunch: true
@@ -91,30 +86,17 @@ spec:
               - key: kubernetes.io/role/elb
                 value: "1"
       patches:
-        - type: CombineFromComposite
-          combine:
-            variables:
-              - fromFieldPath: metadata.generateName
-              - fromFieldPath: spec.subnets.public.name
-            strategy: string
-            string:
-              fmt: "%s-%s-subnet"
-          toFieldPath: spec.forProvider.tags[0].value
-          policy:
-            fromFieldPath: Required
-        - type: CombineFromComposite
-          combine:
-            variables:
-              - fromFieldPath: metadata.generateName
-              - fromFieldPath: spec.subnets.public.name
-            strategy: string
-            string:
-              fmt: "%s-%s-subnet"
-          toFieldPath: metadata.labels.type
-          policy:
-            fromFieldPath: Required
         - type: PatchSet
           patchSetName: common-parameters
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: metadata.generateName
+              - fromFieldPath: spec.subnets.public.name
+            strategy: string
+            string:
+              fmt: "%s%s-subnet"
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
         - fromFieldPath: spec.subnets.public.cidrBlock
           toFieldPath: spec.forProvider.cidrBlock
         - type: CombineFromComposite
@@ -126,10 +108,10 @@ spec:
             string:
               fmt: "%s%s"
           toFieldPath: spec.forProvider.availabilityZone
-          policy:
-            fromFieldPath: Required
         - fromFieldPath: spec.subnets.public.availabilityZone
           toFieldPath: metadata.labels.zone
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.vpcIdSelector.matchLabels.claim
 
     - name: subnet-private-1
       base:
@@ -138,17 +120,18 @@ spec:
         metadata:
           labels:
             visibility: private
-            usage: k8s
+            index: 1
         spec:
           forProvider:
             mapPublicIpOnLaunch: false
             vpcIdSelector:
               matchControllerRef: true
             tags:
-              - key: Name
               - key: kubernetes.io/role/internal-elb
                 value: "1"
       patches:
+        - type: PatchSet
+          patchSetName: common-parameters
         - type: CombineFromComposite
           combine:
             variables:
@@ -156,21 +139,8 @@ spec:
               - fromFieldPath: spec.subnets.private-1.name
             strategy: string
             string:
-              fmt: "%s-%s-subnet"
-          toFieldPath: spec.forProvider.tags[0].value
-          policy:
-            fromFieldPath: Required
-        - type: CombineFromComposite
-          combine:
-            variables:
-              - fromFieldPath: metadata.generateName
-              - fromFieldPath: spec.subnets.private-1.name
-            strategy: string
-            string:
-              fmt: "%s-%s-subnet"
-          toFieldPath: metadata.labels.type
-          policy:
-            fromFieldPath: Required
+              fmt: "%s%s-subnet"
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
         - type: PatchSet
           patchSetName: common-parameters
         - fromFieldPath: spec.subnets.private-1.cidrBlock
@@ -188,6 +158,8 @@ spec:
             fromFieldPath: Required
         - fromFieldPath: spec.subnets.private-1.availabilityZone
           toFieldPath: metadata.labels.zone
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.vpcIdSelector.matchLabels.claim
 
     - name: subnet-private-2
       base:
@@ -196,17 +168,18 @@ spec:
         metadata:
           labels:
             visibility: private
-            usage: k8s
+            kind: 2
         spec:
           forProvider:
             mapPublicIpOnLaunch: false
             vpcIdSelector:
               matchControllerRef: true
             tags:
-              - key: Name
               - key: kubernetes.io/role/internal-elb
                 value: "1"
       patches:
+        - type: PatchSet
+          patchSetName: common-parameters
         - type: CombineFromComposite
           combine:
             variables:
@@ -214,21 +187,8 @@ spec:
               - fromFieldPath: spec.subnets.private-2.name
             strategy: string
             string:
-              fmt: "%s-%s-subnet"
-          toFieldPath: spec.forProvider.tags[0].value
-          policy:
-            fromFieldPath: Required
-        - type: CombineFromComposite
-          combine:
-            variables:
-              - fromFieldPath: metadata.generateName
-              - fromFieldPath: spec.subnets.private-2.name
-            strategy: string
-            string:
-              fmt: "%s-%s-subnet"
-          toFieldPath: metadata.labels.type
-          policy:
-            fromFieldPath: Required
+              fmt: "%s%s-subnet"
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
         - type: PatchSet
           patchSetName: common-parameters
         - fromFieldPath: spec.subnets.private-2.cidrBlock
@@ -246,6 +206,8 @@ spec:
             fromFieldPath: Required
         - fromFieldPath: spec.subnets.private-2.availabilityZone
           toFieldPath: metadata.labels.zone
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.vpcIdSelector.matchLabels.claim
 
     - name: elastic-ip
       base:
@@ -254,19 +216,11 @@ spec:
         spec:
           forProvider:
             domain: vpc
-            tags:
-              - key: Name
       patches:
         - type: PatchSet
           patchSetName: common-parameters
         - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.tags[0].value
-          transforms:
-            - type: string
-              string:
-                fmt: "%sngw-eip"
-        - fromFieldPath: metadata.generateName
-          toFieldPath: metadata.labels.type
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
           transforms:
             - type: string
               string:
@@ -283,40 +237,21 @@ spec:
             subnetIdSelector:
               matchLabels:
                 visibility: public
-            tags:
-              - key: Name
       patches:
         - type: PatchSet
           patchSetName: common-parameters
         - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.tags[0].value
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
           transforms:
             - type: string
               string:
                 fmt: "%sngw"
-        - fromFieldPath: metadata.generateName
-          toFieldPath: metadata.labels.type
-          transforms:
-            - type: string
-              string:
-                fmt: "%sngw"
-        - type: CombineFromComposite
-          combine:
-            variables:
-              - fromFieldPath: metadata.generateName
-              - fromFieldPath: spec.subnets.public.name
-            strategy: string
-            string:
-              fmt: "%s-%s-subnet"
-          toFieldPath: spec.forProvider.subnetIdSelector.matchLabels.type
-          policy:
-            fromFieldPath: Required
-        - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.allocationIdSelector.matchLabels.type
-          transforms:
-            - type: string
-              string:
-                fmt: "%sngw-eip"
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.vpcIdSelector.matchLabels.claim
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.subnetIdSelector.matchLabels.claim
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.allocationIdSelector.matchLabels.claim
 
     - name: routetable-public
       base:
@@ -335,6 +270,8 @@ spec:
             tags:
               - key: Name
       patches:
+        - type: PatchSet
+          patchSetName: common-parameters
         - type: CombineFromComposite
           combine:
             variables:
@@ -342,28 +279,13 @@ spec:
             strategy: string
             string:
               fmt: "%spublic-route-table"
-          toFieldPath: spec.forProvider.tags[0].value
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
           policy:
             fromFieldPath: Required
-        - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.routes[0].gatewayIdSelector.matchLabels.type
-          transforms:
-            - type: string
-              string:
-                fmt: "%sigw"
-        - type: CombineFromComposite
-          combine:
-            variables:
-              - fromFieldPath: metadata.generateName
-              - fromFieldPath: spec.subnets.public.name
-            strategy: string
-            string:
-              fmt: "%s-%s-subnet"
-          toFieldPath: spec.forProvider.associations[0].subnetIdSelector.matchLabels.type
-          policy:
-            fromFieldPath: Required
-        - type: PatchSet
-          patchSetName: common-parameters
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.routes[0].gatewayIdSelector.matchLabels.claim
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.associations[0].subnetIdSelector.matchLabels.claim
 
     - name: routetable-private-1
       base:
@@ -378,11 +300,11 @@ spec:
             associations:
               - subnetIdSelector:
                   matchLabels:
-                    type: subnet
                     visibility: private
-            tags:
-              - key: Name
+                    index: 1
       patches:
+        - type: PatchSet
+          patchSetName: common-parameters
         - type: CombineFromComposite
           combine:
             variables:
@@ -390,28 +312,13 @@ spec:
             strategy: string
             string:
               fmt: "%sprivate-route-table-1"
-          toFieldPath: spec.forProvider.tags[0].value
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
           policy:
             fromFieldPath: Required
-        - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.routes[0].natGatewayIdSelector.matchLabels.type
-          transforms:
-            - type: string
-              string:
-                fmt: "%sngw"
-        - type: CombineFromComposite
-          combine:
-            variables:
-              - fromFieldPath: metadata.generateName
-              - fromFieldPath: spec.subnets.private-1.name
-            strategy: string
-            string:
-              fmt: "%s-%s-subnet"
-          toFieldPath: spec.forProvider.associations[0].subnetIdSelector.matchLabels.type
-          policy:
-            fromFieldPath: Required
-        - type: PatchSet
-          patchSetName: common-parameters
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.routes[0].natGatewayIdSelector.matchLabels.claim
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.associations[0].subnetIdSelector.matchLabels.claim
 
     - name: routetable-private-2
       base:
@@ -427,9 +334,10 @@ spec:
               - subnetIdSelector:
                   matchLabels:
                     visibility: private
-            tags:
-              - key: Name
+                    index: 2
       patches:
+        - type: PatchSet
+          patchSetName: common-parameters
         - type: CombineFromComposite
           combine:
             variables:
@@ -437,90 +345,13 @@ spec:
             strategy: string
             string:
               fmt: "%sprivate-route-table-2"
-          toFieldPath: spec.forProvider.tags[0].value
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
           policy:
             fromFieldPath: Required
-        - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.routes[0].natGatewayIdSelector.matchLabels.type
-          transforms:
-            - type: string
-              string:
-                fmt: "%sngw"
-        - type: CombineFromComposite
-          combine:
-            variables:
-              - fromFieldPath: metadata.generateName
-              - fromFieldPath: spec.subnets.private-2.name
-            strategy: string
-            string:
-              fmt: "%s-%s-subnet"
-          toFieldPath: spec.forProvider.associations[0].subnetIdSelector.matchLabels.type
-          policy:
-            fromFieldPath: Required
-        - type: PatchSet
-          patchSetName: common-parameters
-
-    - name: cluster-role
-      base:
-        apiVersion: iam.aws.crossplane.io/v1beta1
-        kind: Role
-        spec:
-          forProvider:
-            assumeRolePolicyDocument: |
-              {
-                 "Version": "2012-10-17",
-                 "Statement": [
-                   {
-                     "Effect": "Allow",
-                     "Principal": {
-                       "Service": "eks.amazonaws.com"
-                     },
-                     "Action": "sts:AssumeRole"
-                   }
-                 ]
-               }
-            tags:
-              - key: name
-      patches:
-        - type: PatchSet
-          patchSetName: common-parameters
-        - fromFieldPath: metadata.generateName
-          toFieldPath: metadata.labels.role
-          transforms:
-            - type: string
-              string:
-                fmt: "%scluster-role"
-        - fromFieldPath: metadata.generateName
-          toFieldPath: metadata.name
-          transforms:
-            - type: string
-              string:
-                fmt: "%scluster-role"
-        - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.tags[0].value
-          transforms:
-            - type: string
-              string:
-                fmt: "%scluster-role"
-
-    - name: cluster-policy
-      base:
-        apiVersion: iam.aws.crossplane.io/v1beta1
-        kind: RolePolicyAttachment
-        spec:
-          forProvider:
-            policyArn: "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-            roleNameSelector:
-              matchControllerRef: true
-      patches:
-        - type: PatchSet
-          patchSetName: common-parameters
-        - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.roleNameSelector.matchLabels.role
-          transforms:
-            - type: string
-              string:
-                fmt: "%scluster-role"
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.routes[0].natGatewayIdSelector.matchLabels.claim
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.associations[0].subnetIdSelector.matchLabels.claim
 
     - name: eks-cluster
       base:
@@ -531,36 +362,27 @@ spec:
             resourcesVpcConfig:
               endpointPrivateAccess: false
               endpointPublicAccess: true
-              subnetIdSelector:
-                matchLabels:
-                  usage: k8s
             roleArnSelector:
               matchControllerRef: true
+              matchLabels:
+                usage: eks-cluster
           writeConnectionSecretToRef:
             namespace: crossplane-system
       patches:
         - type: PatchSet
           patchSetName: common-parameters
-        - fromFieldPath: spec.k8s-version
-          toFieldPath: spec.forProvider.version
-        - fromFieldPath: metadata.generateName
-          toFieldPath: metadata.labels.type
-          transforms:
-            - type: string
-              string:
-                fmt: "%scluster"
         - fromFieldPath: metadata.generateName
           toFieldPath: metadata.annotations[crossplane.io/external-name]
           transforms:
             - type: string
               string:
                 fmt: "%scluster"
-        - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.roleArnSelector.matchLabels.role
-          transforms:
-            - type: string
-              string:
-                fmt: "%scluster-role"
+        - fromFieldPath: spec.k8s-version
+          toFieldPath: spec.forProvider.version
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.subnetIdSelector.matchLabels.claim
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.roleArnSelector.matchLabels.claim
         - fromFieldPath: metadata.generateName
           toFieldPath: spec.writeConnectionSecretToRef.name
           transforms:
@@ -576,8 +398,6 @@ spec:
         - type: ToCompositeFieldPath
           fromFieldPath: status.atProvider.identity.oidc.issuer
           toFieldPath: status.eks.oidcProvider
-
-
       connectionDetails:
         - name: cluster-ca
           fromConnectionSecretKey: clusterCA
@@ -585,6 +405,55 @@ spec:
           fromConnectionSecretKey: endpoint
         - name: value
           fromConnectionSecretKey: kubeconfig
+
+    - name: cluster-role
+      base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: Role
+        metadata:
+          labels:
+            role: cluster-role
+        spec:
+          forProvider:
+            assumeRolePolicyDocument: |
+              {
+                 "Version": "2012-10-17",
+                 "Statement": [
+                   {
+                     "Effect": "Allow",
+                     "Principal": {
+                       "Service": "eks.amazonaws.com"
+                     },
+                     "Action": "sts:AssumeRole"
+                   }
+                 ]
+               }
+      patches:
+        - type: PatchSet
+          patchSetName: common-parameters
+        - fromFieldPath: metadata.generateName
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
+          transforms:
+            - type: string
+              string:
+                fmt: "%scluster-role"
+
+    - name: cluster-policy
+      base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: RolePolicyAttachment
+        spec:
+          forProvider:
+            policyArn: "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+            roleNameSelector:
+              matchControllerRef: true
+              matchLabels:
+                usage: eks-cluster
+      patches:
+        - type: PatchSet
+          patchSetName: common-parameters
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.roleNameSelector.matchLabels.claim
 
     - name: eks-nodegroup
       base:
@@ -597,34 +466,30 @@ spec:
             scalingConfig:
               minSize: 1
             subnetSelector:
+              matchControllerRef: true
               matchLabels:
-                usage: k8s
                 visibility: private
             clusterNameSelector:
               matchControllerRef: true
             nodeRoleSelector:
               matchControllerRef: true
+              matchLabels:
+                usage: nodegroup
       patches:
         - type: PatchSet
           patchSetName: common-parameters
         - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.nodeRoleSelector.matchLabels.role
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
           transforms:
             - type: string
               string:
-                fmt: "%scluster-role"
-        - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.nodeRoleSelector.matchLabels.role
-          transforms:
-            - type: string
-              string:
-                fmt: "%snode-role"
-        - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.clusterNameSelector.matchLabels.type
-          transforms:
-            - type: string
-              string:
-                fmt: "%scluster"
+                fmt: "%snode-group"
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.nodeRoleSelector.matchLabels.claim
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.clusterNameSelector.matchLabels.claim
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.subnetSelector.matchLabels.claim
         - fromFieldPath: spec.k8s-version
           toFieldPath: spec.forProvider.version
         - fromFieldPath: spec.workers-size
@@ -643,6 +508,9 @@ spec:
       base:
         apiVersion: iam.aws.crossplane.io/v1beta1
         kind: Role
+        metadata:
+          labels:
+            usage: nodegroup
         spec:
           forProvider:
             assumeRolePolicyDocument: |
@@ -658,25 +526,11 @@ spec:
                    }
                  ]
                }
-            tags:
-              - key: name
       patches:
         - type: PatchSet
           patchSetName: common-parameters
         - fromFieldPath: metadata.generateName
-          toFieldPath: metadata.labels.role
-          transforms:
-            - type: string
-              string:
-                fmt: "%snode-role"
-        - fromFieldPath: metadata.generateName
-          toFieldPath: metadata.name
-          transforms:
-            - type: string
-              string:
-                fmt: "%snode-role"
-        - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.tags[0].value
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
           transforms:
             - type: string
               string:
@@ -691,15 +545,13 @@ spec:
             policyArn: arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
             roleNameSelector:
               matchControllerRef: true
+              matchLabels:
+                usage: noderole
       patches:
         - type: PatchSet
           patchSetName: common-parameters
-        - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.roleNameSelector.matchLabels.role
-          transforms:
-            - type: string
-              string:
-                fmt: "%snode-role"
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.roleNameSelector.matchLabels.claim
 
     - name: node-role-cni-policy
       base:
@@ -710,15 +562,13 @@ spec:
             policyArn: arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
             roleNameSelector:
               matchControllerRef: true
+              matchLabels:
+                usage: noderole
       patches:
         - type: PatchSet
           patchSetName: common-parameters
-        - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.roleNameSelector.matchLabels.role
-          transforms:
-            - type: string
-              string:
-                fmt: "%snode-role"
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.roleNameSelector.matchLabels.claim
 
     - name: node-role-ecr-policy
       base:
@@ -729,15 +579,13 @@ spec:
             policyArn: arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
             roleNameSelector:
               matchControllerRef: true
+              matchLabels:
+                usage: noderole
       patches:
         - type: PatchSet
           patchSetName: common-parameters
-        - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.roleNameSelector.matchLabels.role
-          transforms:
-            - type: string
-              string:
-                fmt: "%snode-role"
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.roleNameSelector.matchLabels.claim
 
     - name: argocd-secret-remote-cluster-credentials
       base:
@@ -807,6 +655,7 @@ spec:
                 convert: ToBase64
           policy:
             fromFieldPath: Required
+
     - name: remote-cluster-helm-provider-config
       base:
         apiVersion: helm.crossplane.io/v1beta1
