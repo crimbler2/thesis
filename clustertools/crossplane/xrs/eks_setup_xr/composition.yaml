@@ -587,6 +587,7 @@ spec:
         - fromFieldPath: metadata.name
           toFieldPath: spec.forProvider.roleNameSelector.matchLabels.claim
 
+###### All resources from here configure the connection to the created cluster and deploy to it
     - name: argocd-secret-remote-cluster-credentials
       base:
         apiVersion: kubernetes.crossplane.io/v1alpha1
@@ -667,12 +668,8 @@ spec:
               namespace: crossplane-system
               key: kubeconfig
       patches:
-        - fromFieldPath: metadata.generateName
+        - fromFieldPath: metadata.name
           toFieldPath: metadata.name
-          transforms:
-            - type: string
-              string:
-                fmt: "%shelm-provider-config"
         # This ProviderConfig uses the above EKSCluster's connection secret as
         # its credentials secret.
         - fromFieldPath: metadata.generateName
@@ -683,6 +680,7 @@ spec:
                 fmt: "%scluster-connection"
       readinessChecks:
         - type: None
+
     - name: remote-cluster-argocd-installation
       base:
         apiVersion: helm.crossplane.io/v1beta1
@@ -718,12 +716,9 @@ spec:
               crds:
                 keep: false
       patches:
-        - fromFieldPath: metadata.generateName
+        - fromFieldPath: metadata.name
           toFieldPath: spec.providerConfigRef.name
-          transforms:
-            - type: string
-              string:
-                fmt: "%shelm-provider-config"
+
     - name: remote-cluster-root-application
       base:
         apiVersion: helm.crossplane.io/v1beta1
@@ -755,16 +750,13 @@ spec:
                       prune: true
                       selfHeal: true
       patches:
-        - fromFieldPath: metadata.generateName
+        - fromFieldPath: metadata.name
           toFieldPath: spec.providerConfigRef.name
-          transforms:
-            - type: string
-              string:
-                fmt: "%shelm-provider-config"
         - fromFieldPath: spec.rootRepoUrl
           toFieldPath: spec.forProvider.values.applications[0].source.repoUrl
         - fromFieldPath: spec.rootRepoPath
           toFieldPath: spec.forProvider.values.applications[0].source.repoPath
+
     - name: remote-cluster-kubernetes-provider-config
       base:
         apiVersion: kubernetes.crossplane.io/v1alpha1
@@ -776,12 +768,8 @@ spec:
               namespace: crossplane-system
               key: kubeconfig
       patches:
-        - fromFieldPath: metadata.generateName
+        - fromFieldPath: metadata.name
           toFieldPath: metadata.name
-          transforms:
-            - type: string
-              string:
-                fmt: "kubernetes-provider%s-config"
         # This ProviderConfig uses the above EKSCluster's connection secret as
         # its credentials secret.
         - fromFieldPath: metadata.generateName
@@ -792,6 +780,7 @@ spec:
                 fmt: "%scluster-connection"
       readinessChecks:
         - type: None
+
     - name: remote-cluster-argocd-secret-root-repo
       base:
         apiVersion: kubernetes.crossplane.io/v1alpha1
@@ -810,12 +799,6 @@ spec:
                 type: git
               type: Opaque
       patches:
-        - fromFieldPath: metadata.generateName
-          toFieldPath: metadata.name
-          transforms:
-            - type: string
-              string:
-                fmt: "%sargocd-root-repo-secret"
         - fromFieldPath: spec.rootRepoUrl
           toFieldPath: spec.forProvider.manifest.data.url
           transforms:
@@ -823,12 +806,9 @@ spec:
               string:
                 type: Convert
                 convert: ToBase64
-        - fromFieldPath: metadata.generateName
+        - fromFieldPath: metadata.name
           toFieldPath: spec.providerConfigRef.name
-          transforms:
-            - type: string
-              string:
-                fmt: "kubernetes-provider%s-config"
+
     - name: remote-cluster-oidc-provider
       base:
         apiVersion: iam.aws.crossplane.io/v1beta1
@@ -840,16 +820,19 @@ spec:
             thumbprintList:
               - "9e99a48a9960b14926bb7f3b02e22da2b0ab7280"
       patches:
+        - type: PatchSet
+          patchSetName: common-parameters
         - fromFieldPath: status.eks.oidcProvider
           toFieldPath: spec.forProvider.url
           policy:
             fromFieldPath: Required
 
-
     - name: remote-cluster-external-secrets-irsa-role
       base:
         apiVersion: iam.aws.crossplane.io/v1beta1
         kind: Role
+        metadata:
+          usage: external-secrets
         spec:
           forProvider:
             tags:
@@ -858,19 +841,7 @@ spec:
         - type: PatchSet
           patchSetName: common-parameters
         - fromFieldPath: metadata.generateName
-          toFieldPath: metadata.name
-          transforms:
-            - type: string
-              string:
-                fmt: "%sexternal-secrets-irsa-role"
-        - fromFieldPath: metadata.generateName
-          toFieldPath: metadata.labels.role
-          transforms:
-            - type: string
-              string:
-                fmt: "%sexternal-secrets-irsa-role"
-        - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.tags[0].value
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
           transforms:
             - type: string
               string:
@@ -907,6 +878,8 @@ spec:
       base:
         apiVersion: iam.aws.crossplane.io/v1beta1
         kind: Policy
+        metadata:
+          usage: external-secrets
         spec:
           forProvider:
             document: |
@@ -929,19 +902,7 @@ spec:
         - type: PatchSet
           patchSetName: common-parameters
         - fromFieldPath: metadata.generateName
-          toFieldPath: metadata.name
-          transforms:
-            - type: string
-              string:
-                fmt: "%sexternal-secrets-irsa-policy"
-        - fromFieldPath: metadata.generateName
-          toFieldPath: metadata.labels.role
-          transforms:
-            - type: string
-              string:
-                fmt: "%sexternal-secrets-irsa-policy"
-        - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.name
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
           transforms:
             - type: string
               string:
@@ -956,20 +917,14 @@ spec:
             policyArn: "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
             roleNameSelector:
               matchControllerRef: true
+              usage: external-secrets
             policyArnSelector:
               matchControllerRef: true
+              usage: external-secrets
       patches:
         - type: PatchSet
           patchSetName: common-parameters
-        - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.roleNameSelector.matchLabels.role
-          transforms:
-            - type: string
-              string:
-                fmt: "%sexternal-secrets-irsa-role"
-        - fromFieldPath: metadata.generateName
-          toFieldPath: spec.forProvider.policyArnSelector.matchLabels.role
-          transforms:
-            - type: string
-              string:
-                fmt: "%sexternal-secrets-irsa-policy"
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.roleNameSelector.matchLabels.claim
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.policyArnSelector.matchLabels.claim
