@@ -409,7 +409,7 @@ spec:
         kind: Role
         metadata:
           labels:
-            role: cluster-role
+            usage: eks-cluster
         spec:
           forProvider:
             assumeRolePolicyDocument: |
@@ -435,7 +435,7 @@ spec:
               string:
                 fmt: "%scluster-role"
 
-    - name: cluster-policy
+    - name: cluster-policy-attachment
       base:
         apiVersion: iam.aws.crossplane.io/v1beta1
         kind: RolePolicyAttachment
