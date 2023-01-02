@@ -82,7 +82,6 @@ spec:
             vpcIdSelector:
               matchControllerRef: true
             tags:
-              - key: Name
               - key: kubernetes.io/role/elb
                 value: "1"
       patches:
@@ -267,8 +266,6 @@ spec:
               - subnetIdSelector:
                   matchLabels:
                     visibility: public
-            tags:
-              - key: Name
       patches:
         - type: PatchSet
           patchSetName: common-parameters
@@ -833,10 +830,6 @@ spec:
         kind: Role
         metadata:
           usage: external-secrets
-        spec:
-          forProvider:
-            tags:
-              - key: name
       patches:
         - type: PatchSet
           patchSetName: common-parameters
@@ -902,7 +895,7 @@ spec:
         - type: PatchSet
           patchSetName: common-parameters
         - fromFieldPath: metadata.generateName
-          toFieldPath: metadata.annotations[crossplane.io/external-name]
+          toFieldPath: spec.forProvider.name
           transforms:
             - type: string
               string:
