@@ -120,7 +120,7 @@ spec:
         metadata:
           labels:
             visibility: private
-            index: 1
+            index: "1"
         spec:
           forProvider:
             mapPublicIpOnLaunch: false
@@ -168,7 +168,7 @@ spec:
         metadata:
           labels:
             visibility: private
-            kind: 2
+            index: "2"
         spec:
           forProvider:
             mapPublicIpOnLaunch: false
@@ -301,7 +301,7 @@ spec:
               - subnetIdSelector:
                   matchLabels:
                     visibility: private
-                    index: 1
+                    index: "1"
       patches:
         - type: PatchSet
           patchSetName: common-parameters
@@ -334,7 +334,7 @@ spec:
               - subnetIdSelector:
                   matchLabels:
                     visibility: private
-                    index: 2
+                    index: "2"
       patches:
         - type: PatchSet
           patchSetName: common-parameters
