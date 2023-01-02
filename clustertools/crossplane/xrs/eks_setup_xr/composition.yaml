@@ -828,8 +828,8 @@ spec:
       base:
         apiVersion: iam.aws.crossplane.io/v1beta1
         kind: Role
-        metadata:
-          usage: external-secrets
+        # metadata:
+          # usage: external-secrets
       patches:
         - type: PatchSet
           patchSetName: common-parameters
@@ -871,8 +871,8 @@ spec:
       base:
         apiVersion: iam.aws.crossplane.io/v1beta1
         kind: Policy
-        metadata:
-          usage: external-secrets
+        # metadata:
+          # usage: external-secrets
         spec:
           forProvider:
             document: |
