@@ -828,8 +828,9 @@ spec:
       base:
         apiVersion: iam.aws.crossplane.io/v1beta1
         kind: Role
-        # metadata:
-          # usage: external-secrets
+        metadata:
+          labels:
+            usage: external-secrets
       patches:
         - type: PatchSet
           patchSetName: common-parameters
@@ -872,7 +873,8 @@ spec:
         apiVersion: iam.aws.crossplane.io/v1beta1
         kind: Policy
         metadata:
-          usage: external-secrets
+          labels:
+            usage: external-secrets
         spec:
           forProvider:
             document: |
@@ -910,10 +912,12 @@ spec:
             policyArn: "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
             roleNameSelector:
               matchControllerRef: true
-              usage: external-secrets
+              matchLabels:
+                usage: external-secrets
             policyArnSelector:
               matchControllerRef: true
-              usage: external-secrets
+              matchLabels:
+                usage: external-secrets
       patches:
         - type: PatchSet
           patchSetName: common-parameters
