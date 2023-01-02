@@ -561,7 +561,7 @@ spec:
             roleNameSelector:
               matchControllerRef: true
               matchLabels:
-                usage: noderole
+                usage: nodegroup
       patches:
         - type: PatchSet
           patchSetName: common-parameters
@@ -578,7 +578,7 @@ spec:
             roleNameSelector:
               matchControllerRef: true
               matchLabels:
-                usage: noderole
+                usage: nodegroup
       patches:
         - type: PatchSet
           patchSetName: common-parameters
@@ -595,7 +595,7 @@ spec:
             roleNameSelector:
               matchControllerRef: true
               matchLabels:
-                usage: noderole
+                usage: nodegroup
       patches:
         - type: PatchSet
           patchSetName: common-parameters
