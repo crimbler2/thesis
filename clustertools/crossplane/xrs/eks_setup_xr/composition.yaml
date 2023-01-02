@@ -258,8 +258,6 @@ spec:
               string:
                 fmt: "%sngw"
         - fromFieldPath: metadata.name
-          toFieldPath: spec.forProvider.vpcIdSelector.matchLabels.claim
-        - fromFieldPath: metadata.name
           toFieldPath: spec.forProvider.subnetIdSelector.matchLabels.claim
         - fromFieldPath: metadata.name
           toFieldPath: spec.forProvider.allocationIdSelector.matchLabels.claim
@@ -377,6 +375,8 @@ spec:
             resourcesVpcConfig:
               endpointPrivateAccess: false
               endpointPublicAccess: true
+              subnetIdSelector:
+                matchControllerRef: true
             roleArnSelector:
               matchControllerRef: true
               matchLabels:
@@ -395,7 +395,7 @@ spec:
         - fromFieldPath: spec.k8s-version
           toFieldPath: spec.forProvider.version
         - fromFieldPath: metadata.name
-          toFieldPath: spec.forProvider.subnetIdSelector.matchLabels.claim
+          toFieldPath: spec.forProvider.resourcesVpcConfig.subnetIdSelector.matchLabels.claim
         - fromFieldPath: metadata.name
           toFieldPath: spec.forProvider.roleArnSelector.matchLabels.claim
         - fromFieldPath: metadata.generateName
