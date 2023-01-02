@@ -810,17 +810,12 @@ spec:
                 namespace: argocd-system
                 labels:
                   argocd.argoproj.io/secret-type: repository
-              data:
+              stringData:
                 type: git
               type: Opaque
       patches:
         - fromFieldPath: spec.rootRepoUrl
-          toFieldPath: spec.forProvider.manifest.data.url
-          transforms:
-            - type: string
-              string:
-                type: Convert
-                convert: ToBase64
+          toFieldPath: spec.forProvider.manifest.stringData.url
         - fromFieldPath: metadata.name
           toFieldPath: spec.providerConfigRef.name
 
