@@ -41,7 +41,7 @@ spec:
         - fromFieldPath: spec.vpc-cidrBlock
           toFieldPath: spec.forProvider.cidrBlock
         - fromFieldPath: metadata.generateName
-          toFieldPath: metadata.annotations[crossplane.io/external-name]
+          toFieldPath: metadata.name
           transforms:
             - type: string
               string:
