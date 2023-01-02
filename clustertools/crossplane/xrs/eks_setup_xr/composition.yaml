@@ -768,9 +768,9 @@ spec:
         - fromFieldPath: metadata.name
           toFieldPath: spec.providerConfigRef.name
         - fromFieldPath: spec.rootRepoUrl
-          toFieldPath: spec.forProvider.values.applications[0].source.repoUrl
+          toFieldPath: spec.forProvider.values.applications[0].source.repoURL
         - fromFieldPath: spec.rootRepoPath
-          toFieldPath: spec.forProvider.values.applications[0].source.repoPath
+          toFieldPath: spec.forProvider.values.applications[0].source.path
 
     - name: remote-cluster-kubernetes-provider-config
       base:
