@@ -60,8 +60,8 @@ spec:
               matchControllerRef: true
               matchLabels:
                 claim: # patched
-          tags:
-            - key: Name
+            tags:
+              - key: Name
       patches:
         - type: PatchSet
           patchSetName: common-parameters
