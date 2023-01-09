@@ -1,0 +1,15 @@
+applications:
+  - name: root
+    namespace: argocd-system
+    finalizers:
+      - resources-finalizer.argocd.argoproj.io
+    project: default
+    source:
+      targetRevision: HEAD
+    destination:
+      server: https://kubernetes.default.svc
+      namespace: argocd-system
+    syncPolicy:
+      automated:
+        prune: true
+        selfHeal: true

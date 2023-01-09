@@ -1,0 +1,19 @@
+server:
+  service:
+    type: LoadBalancer
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: nlb
+  # change security context to 999 according to: https://www.modulo2.nl/blog/argocd-on-aws-with-multiple-clusters
+  securityContext:
+    fsGroup: 999
+controller:
+  # change security context to 999 according to: https://www.modulo2.nl/blog/argocd-on-aws-with-multiple-clusters
+  securityContext:
+    fsGroup: 999
+configs:
+  secret:
+    argocdServerAdminPassword: $2a$12$IRs7lU0wuPtsG76OsHWS8ONpyVymvHQeOR3wKZR.nUcx0PkIiZw62
+  cm:
+    "application.instanceLabelKey": argocd.argoproj.io/tracking-id
+crds:
+  keep: false
