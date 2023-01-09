@@ -1,5 +1,5 @@
 module "ClusterSetup" {
-  source             = "../../terraform_my_eks"
+  source             = "../../eks_setup"
   kubernetes_version = "1.24"
   region             = "eu-central-1"
   stage              = "prod"
