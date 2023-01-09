@@ -1,11 +1,55 @@
+This monorepository holds different configuration files all related to Kubernetes, ArgoCD, Terraform and Crossplane.
 This repo holds the configuration for installing tools (crossplane and external-secrets) and example services to a
 Cluster via ArgoCD.
-If the `root` folder (or one of its overlays) is applied to a cluster, ArgoCD will apply 2 ApplicationSets.
-One directly applies the resources of the `clustertools` folder, the other will create the applications based on the
-config files in the `tenants` folder. They again point to this same repo and the folder `remote_repos`.
-The folders point to each other via ArgoCD Applications like so:
 
+This is the directory structure:
 ```
-root -> clustertools
-root -> tenants -> remote_repos
+.
+└── infrastructure
+    ├── clusters
+    │   └── claims
+    ├── clustertools
+    │   ├── crossplane
+    │   │   └── xrs
+    │   │       ├── eks_setup_xr
+    │   │       └── vpc_xr
+    │   └── external-secrets
+    ├── remote_repos
+    │   ├── remote_repo_team_1
+    │   │   ├── base
+    │   │   └── overlays
+    │   │       ├── dev
+    │   │       └── prod
+    │   └── remote_repo_team_2
+    │       ├── base
+    │       └── overlays
+    │           ├── dev
+    │           └── prod
+    ├── root
+    │   ├── base
+    │   └── overlays
+    │       ├── dev
+    │       └── prod
+    ├── tenants
+    └── terraform
+              ├── terraform_my_eks
+              │   └── argocd_config
+              └── workspaces
+                  ├── int
+                  └── prod
+```
+The Terraform directory contains an EKS Setup in Terraform. 
+
+The root directory contains 2 ArgoCD ApplicationSets further configured by kustomize.
+One ApplicationSet applies the resources of the `clustertools` folder, the other will create the applications based on the
+config files in the `tenants` folder. They again point to this same repo and the folder `remote_repos`.
+
+Under `clustertools/crossplane/xrs/eks_setup_xr` a Crossplane Composite Resource is defined and composed.
+This XR describes the same resources as the Terraform Setup.
+The folder `cluster_setup_claims` defines Claims for the just mentioned Composite Resource.
+
+On a high level, the folders point to each other via ArgoCD Applications like so:
+```
+(terraform|crossplane) -> root -> clustertools
+(terraform|crossplane) -> root -> tenants -> remote_repos
 ```
