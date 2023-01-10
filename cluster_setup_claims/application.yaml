@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/crimbler2/argocd-infrastructure-repo.git
     targetRevision: HEAD
-    path: clusters/claims
+    path: cluster_setup_claims/claims
   destination:
     server: https://kubernetes.default.svc
     namespace: crossplane-system
