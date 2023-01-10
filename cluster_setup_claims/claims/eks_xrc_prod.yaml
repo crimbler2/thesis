@@ -1,13 +1,12 @@
-apiVersion: thesis.io/v1alpha1
-kind: XClusterSetup
-metadata:
-  name: prod-crossplane
-  namespace: crossplane-system
-spec:
-  providerConfigRef: aws-provider-config
-  region: eu-central-1
-  k8s-version: "1.24"
-  rootRepo: https://github.com/crimbler2/argocd-infrastructure-repo
-  rootRepoUrl: https://github.com/crimbler2/argocd-infrastructure-repo
-  rootRepoPath: root/overlays/prod
-  compositeDeletePolicy: Foreground
+# apiVersion: thesis.io/v1alpha1
+# kind: XClusterSetup
+# metadata:
+#   name: prod-crossplane
+#   namespace: crossplane-system
+# spec:
+#   providerConfigRef: aws-provider-config
+#   region: eu-central-1
+#   k8s-version: "1.24"
+#   rootRepo: https://github.com/crimbler2/argocd-infrastructure-repo
+#   rootRepoUrl: https://github.com/crimbler2/argocd-infrastructure-repo
+#   rootRepoPath: root/overlays/prod
