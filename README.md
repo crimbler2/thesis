@@ -1,4 +1,5 @@
 This monorepository holds different configuration files all related to Kubernetes, ArgoCD, Terraform and Crossplane.
+It can be used to compare Crossplane and Terraform.
 
 This is the directory structure:
 ```
