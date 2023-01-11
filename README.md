@@ -1,6 +1,4 @@
 This monorepository holds different configuration files all related to Kubernetes, ArgoCD, Terraform and Crossplane.
-This repo holds the configuration for installing tools (crossplane and external-secrets) and example services to a
-Cluster via ArgoCD.
 
 This is the directory structure:
 ```
