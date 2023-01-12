@@ -1,0 +1,423 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: thesis-tenant
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  writeConnectionSecretsToNamespace: crossplane-system
+  compositeTypeRef:
+    apiVersion: thesis.io/v1alpha1
+    kind: Tenant
+  patchSets:
+    - name: common-parameters
+      patches:
+        - fromFieldPath: spec.region
+          toFieldPath: spec.forProvider.region
+        - fromFieldPath: spec.providerConfigRef
+          toFieldPath: spec.providerConfigRef.name
+          policy:
+            fromFieldPath: Required
+        - fromFieldPath: metadata.name
+          toFieldPath: metadata.labels.claim
+  resources:
+    - name: tenant-namespace
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha1
+        kind: Object
+        spec:
+          forProvider:
+            manifest:
+              apiVersion: v1
+              kind: Namespace
+          providerConfigRef:
+            name: kubernetes-provider-local-config
+      patches:
+        - fromFieldPath: spec.application.namespace
+          toFieldPath: spec.forProvider.manifest.metadata.name
+
+    - name: developer-iam-role
+      base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: Role
+        metadata:
+          labels:
+            usage: tenant
+            role: developer
+      patches:
+        - type: PatchSet
+          patchSetName: common-parameters
+        - fromFieldPath: metadata.name
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-developer-role"
+        - type: ToCompositeFieldPath
+          fromFieldPath: status.atProvider.arn
+          toFieldPath: status.iam.developerRoleArn
+        - fromFieldPath: spec.developers
+          toFieldPath: spec.forProvider.assumeRolePolicyDocument
+          transforms:
+            - type: string
+              string:
+                fmt: |
+                  {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Sid": "AllowK8SDeveloperAccess",
+                        "Effect": "Allow",
+                        "Principal": {
+                          "AWS": [
+                            %s
+                          ]
+                        },
+                        "Action": [
+                          "sts:AssumeRole",
+                          "sts:SetSourceIdentity"
+                        ]
+                      }
+                    ]
+                  }
+          policy:
+            fromFieldPath: Required
+
+    - name: admin-iam-role
+      base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: Role
+        metadata:
+          labels:
+            usage: tenant
+            role: admin
+      patches:
+        - type: PatchSet
+          patchSetName: common-parameters
+        - fromFieldPath: metadata.name
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-admin-role"
+        - type: ToCompositeFieldPath
+          fromFieldPath: status.atProvider.arn
+          toFieldPath: status.iam.adminRoleArn
+        - fromFieldPath: spec.admins
+          toFieldPath: spec.forProvider.assumeRolePolicyDocument
+          transforms:
+            - type: string
+              string:
+                fmt: |
+                  {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Sid": "AllowK8SAdminAccess",
+                        "Effect": "Allow",
+                        "Principal": {
+                          "AWS": [
+                            %s
+                          ]
+                        },
+                        "Action": [
+                          "sts:AssumeRole",
+                          "sts:SetSourceIdentity"
+                        ]
+                      }
+                    ]
+                  }
+          policy:
+            fromFieldPath: Required
+
+    - name: describe-cluster-policy
+      base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: Policy
+        metadata:
+          labels:
+            usage: tenant
+        spec:
+          forProvider:
+            document: |
+              {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Sid": "DescribeK8SCluster",
+                    "Effect": "Allow",
+                    "Action": "eks:DescribeCluster",
+                    "Resource": "*"
+                  }
+                ]
+              }
+      patches:
+        - type: PatchSet
+          patchSetName: common-parameters
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-describe-cluster"
+          policy:
+            fromFieldPath: Required
+
+    - name: developer-rolepolicyattachment
+      base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: RolePolicyAttachment
+        spec:
+          forProvider:
+            roleNameSelector:
+              matchControllerRef: true
+              matchLabels:
+                usage: tenant
+                role: developer
+            policyArnSelector:
+              matchControllerRef: true
+              matchLabels:
+                usage: tenant
+      patches:
+        - type: PatchSet
+          patchSetName: common-parameters
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.roleNameSelector.matchLabels.claim
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.policyArnSelector.matchLabels.claim
+
+    - name: admin-rolepolicyattachment
+      base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: RolePolicyAttachment
+        spec:
+          forProvider:
+            roleNameSelector:
+              matchControllerRef: true
+              matchLabels:
+                usage: tenant
+                role: admin
+            policyArnSelector:
+              matchControllerRef: true
+              matchLabels:
+                usage: tenant
+      patches:
+        - type: PatchSet
+          patchSetName: common-parameters
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.roleNameSelector.matchLabels.claim
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.policyArnSelector.matchLabels.claim
+
+    - name: developer-k8s-role
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha1
+        kind: Object
+        spec:
+          forProvider:
+            manifest:
+              apiVersion: rbac.authorization.k8s.io/v1
+              kind: Role
+              rules:
+                - apiGroups: [ "*" ]
+                  resources: [ "*" ]
+                  verbs: [ "*" ]
+          providerConfigRef:
+            name: kubernetes-provider-local-config
+      patches:
+        - fromFieldPath: spec.application.namespace
+          toFieldPath: spec.forProvider.manifest.metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-developer"
+        - fromFieldPath: spec.application.namespace
+          toFieldPath: spec.forProvider.manifest.metadata.namespace
+
+    - name: developer-binding
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha1
+        kind: Object
+        spec:
+          forProvider:
+            manifest:
+              apiVersion: rbac.authorization.k8s.io/v1
+              kind: RoleBinding
+              roleRef:
+                apiGroup: rbac.authorization.k8s.io
+                kind: Role
+              subjects:
+                - apiGroup: rbac.authorization.k8s.io
+                  kind: Group
+          providerConfigRef:
+            name: kubernetes-provider-local-config
+      patches:
+        - fromFieldPath: spec.application.namespace
+          toFieldPath: spec.forProvider.manifest.metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-developer-binding"
+        - fromFieldPath: spec.application.namespace
+          toFieldPath: spec.forProvider.manifest.metadata.namespace
+        - fromFieldPath: spec.application.namespace
+          toFieldPath: spec.forProvider.manifest.roleRef.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-developer"
+        - fromFieldPath: spec.application.namespace
+          toFieldPath: spec.forProvider.manifest.subjects[0].name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-developer"
+
+    - name: developer-aws-auth-entry
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha1
+        kind: Object
+        spec:
+          forProvider:
+            manifest:
+              apiVersion: v1
+              kind: Secret
+              metadata:
+                namespace: kube-system
+                labels:
+                  wadtfy.io/secret-type: aws-auth-user-entry
+              type: Opaque
+          providerConfigRef:
+            name: kubernetes-provider-local-config
+      patches:
+        - fromFieldPath: spec.application.namespace
+          toFieldPath: spec.forProvider.manifest.metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-developer-aws-auth-entry"
+        - fromFieldPath: status.iam.developerRoleArn
+          toFieldPath: spec.forProvider.manifest.stringData.userarn
+          policy:
+            fromFieldPath: Required
+        - fromFieldPath: spec.application.namespace
+          toFieldPath: spec.forProvider.manifest.stringData.username
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-developer"
+        - fromFieldPath: spec.application.namespace
+          toFieldPath: spec.forProvider.manifest.stringData.group
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-developer"
+
+    - name: admin-k8s-role
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha1
+        kind: Object
+        spec:
+          forProvider:
+            manifest:
+              apiVersion: rbac.authorization.k8s.io/v1
+              kind: Role
+              rules:
+                - apiGroups: [ "*" ]
+                  resources: [ "*" ]
+                  verbs: [ "*" ]
+          providerConfigRef:
+            name: kubernetes-provider-local-config
+      patches:
+        - fromFieldPath: spec.application.namespace
+          toFieldPath: spec.forProvider.manifest.metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-admin"
+        - fromFieldPath: spec.application.namespace
+          toFieldPath: spec.forProvider.manifest.metadata.namespace
+
+    - name: admin-binding
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha1
+        kind: Object
+        spec:
+          forProvider:
+            manifest:
+              apiVersion: rbac.authorization.k8s.io/v1
+              kind: RoleBinding
+              roleRef:
+                apiGroup: rbac.authorization.k8s.io
+                kind: Role
+              subjects:
+                - apiGroup: rbac.authorization.k8s.io
+                  kind: Group
+          providerConfigRef:
+            name: kubernetes-provider-local-config
+      patches:
+        - fromFieldPath: spec.application.namespace
+          toFieldPath: spec.forProvider.manifest.metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-admin-binding"
+        - fromFieldPath: spec.application.namespace
+          toFieldPath: spec.forProvider.manifest.metadata.namespace
+        - fromFieldPath: spec.application.namespace
+          toFieldPath: spec.forProvider.manifest.roleRef.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-admin"
+        - fromFieldPath: spec.application.namespace
+          toFieldPath: spec.forProvider.manifest.subjects[0].name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-admin"
+
+    - name: admin-aws-auth-entry
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha1
+        kind: Object
+        spec:
+          forProvider:
+            manifest:
+              apiVersion: v1
+              kind: Secret
+              metadata:
+                namespace: kube-system
+                labels:
+                  wadtfy.io/secret-type: aws-auth-user-entry
+              type: Opaque
+          providerConfigRef:
+            name: kubernetes-provider-local-config
+      patches:
+        - fromFieldPath: spec.application.namespace
+          toFieldPath: spec.forProvider.manifest.metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-admin-aws-auth-entry"
+        - fromFieldPath: status.iam.adminRoleArn
+          toFieldPath: spec.forProvider.manifest.stringData.userarn
+          policy:
+            fromFieldPath: Required
+        - fromFieldPath: spec.application.namespace
+          toFieldPath: spec.forProvider.manifest.stringData.username
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-admin"
+        - fromFieldPath: spec.application.namespace
+          toFieldPath: spec.forProvider.manifest.stringData.group
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-admin"
+    # - Secret - type: awsauthentry
+    # - Kubernetes Role
+    # - Kubernetes Policy
+    # - Kubernetes RolePolicyAttachment
+    # - ArgoCD Application and Project

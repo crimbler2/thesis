@@ -1,0 +1,67 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: tenants.thesis.io
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  group: thesis.io
+  names:
+    kind: Tenant
+    plural: tenants
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                application:
+                  type: object
+                  properties:
+                    repository:
+                      type: string
+                      description: "Url of the repository to be tracked by ArgoCD"
+                    path:
+                      type: string
+                      description: "Path to the folder to be tracked by ArgoCD"
+                    namespace:
+                      type: string
+                      description: "Namespace of the tenant"
+                  required:
+                    - repository
+                    - path
+                    - namespace
+                developers:
+                  type: string
+                  description: "AWS Arns of the BMW Colleagues to grant access to this namespace and Argo Project"
+                admins:
+                  type: string
+                  description: "AWS Arns of the BMW Colleagues to grant admin access to this namespace and Argo Project"
+                providerConfigRef:
+                  description: Name of provider
+                  type: string
+                region:
+                  description: Geographic location of this Cluster Setup
+                  type: string
+                  enum: [ "eu-central-1", "eu-west-1" ]
+              required:
+                - application
+                - developers
+                - admins
+                - providerConfigRef
+                - region
+            status:
+              description: A Status represents the observed state
+              properties:
+                iam:
+                  description: Freeform field containing status information for the created IAM Fields
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+              type: object
+          required:
+            - spec
