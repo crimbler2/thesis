@@ -922,7 +922,6 @@ spec:
         kind: RolePolicyAttachment
         spec:
           forProvider:
-            policyArn: "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
             roleNameSelector:
               matchControllerRef: true
               matchLabels:
