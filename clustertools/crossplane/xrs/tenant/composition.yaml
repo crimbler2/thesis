@@ -285,7 +285,7 @@ spec:
               metadata:
                 namespace: kube-system
                 labels:
-                  wadtfy.io/secret-type: aws-auth-user-entry
+                  wadtfy.io/secret-type: aws-auth-entry
               type: Opaque
           providerConfigRef:
             name: kubernetes-provider-local-config
@@ -389,7 +389,7 @@ spec:
               metadata:
                 namespace: kube-system
                 labels:
-                  wadtfy.io/secret-type: aws-auth-user-entry
+                  wadtfy.io/secret-type: aws-auth-entry
               type: Opaque
           providerConfigRef:
             name: kubernetes-provider-local-config

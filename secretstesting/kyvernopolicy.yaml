@@ -1,0 +1,54 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: "inject-entries-into-aws-auth-cm-via-secrets"
+spec:
+  mutateExistingOnPolicyUpdate: true
+  rules:
+    - name: "add-aws-auth-entry-when-secret-is-created"
+      match:
+        any:
+          - resources:
+              kinds:
+                - Secret
+              namespaces:
+                - default
+              selector:
+                matchLabels:
+                  wadtfy.io/secret-type: aws-auth-user-entry
+      preconditions:
+        any:
+          - key: "{{ request.operation }}"
+            operator: Equals
+            value: CREATE
+      context:
+        # access current aws-auth entries via external source, so the value including an {{}} statement does not get evaluated
+        - name: currentEntries
+          configMap:
+            name: tester
+            namespace: default
+        - name: newEntry
+          variable:
+            value: |
+              - groups:
+                - {{request.object.data.group | base64_decode(@)}}
+                rolearn: {{request.object.data.rolearn | base64_decode(@)}}
+                username: {{request.object.data.username | base64_decode(@)}}
+        - name: newEntries
+          variable:
+            value: '{{currentEntries.data.mapRoles}}'
+            # this command just appends a value to the variable
+            # it should be possible by just writing the value next to the variable
+            # but due to the fact the variable contains an {{}}-expression, Kyverno seems to try and evaluate it
+            # I couldn't find a way to turn this behaviour off. Apparently just referencing as a value does not cause Kyverno to
+            # try and evaluate it
+            jmesPath: "regex_replace_all('$', @, '{{newEntry}}')"
+      mutate:
+        targets:
+          - apiVersion: v1
+            kind: ConfigMap
+            name: tester
+            namespace: default
+        patchStrategicMerge:
+          data:
+            mapRoles: "{{newEntries}}"
