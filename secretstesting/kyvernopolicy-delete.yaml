@@ -11,7 +11,7 @@ spec:
               kinds:
                 - Secret
               namespaces:
-                - default
+                - kube-system
               selector:
                 matchLabels:
                   wadtfy.io/secret-type: aws-auth-entry
@@ -24,8 +24,8 @@ spec:
         # access current aws-auth entries via external source, so the value including an {{}} statement does not get evaluated
         - name: currentEntries
           configMap:
-            name: tester
-            namespace: default
+            name: aws-auth
+            namespace: kube-system
         - name: oldEntry
           variable:
             value: |
@@ -46,9 +46,8 @@ spec:
         targets:
           - apiVersion: v1
             kind: ConfigMap
-            name: tester
-            namespace: default
+            name: aws-auth
+            namespace: kube-system
         patchStrategicMerge:
           data:
             mapRoles: "{{newEntries}}"
-            delete: "{{oldEntry}}"
