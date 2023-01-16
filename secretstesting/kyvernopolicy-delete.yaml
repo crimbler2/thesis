@@ -1,0 +1,54 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: "delete-entries-into-aws-auth-cm-via-secrets"
+spec:
+  rules:
+    - name: "remove-aws-auth-entry-when-secret-is-deleted"
+      match:
+        any:
+          - resources:
+              kinds:
+                - Secret
+              namespaces:
+                - default
+              selector:
+                matchLabels:
+                  wadtfy.io/secret-type: aws-auth-entry
+      preconditions:
+        any:
+          - key: "{{ request.operation }}"
+            operator: Equals
+            value: DELETE
+      context:
+        # access current aws-auth entries via external source, so the value including an {{}} statement does not get evaluated
+        - name: currentEntries
+          configMap:
+            name: tester
+            namespace: default
+        - name: oldEntry
+          variable:
+            value: |
+              - groups:
+                - {{request.oldObject.data.group | base64_decode(@)}}
+                rolearn: {{request.oldObject.data.rolearn | base64_decode(@)}}
+                username: {{request.oldObject.data.username | base64_decode(@)}}
+        - name: newEntries
+          variable:
+            value: '{{currentEntries.data.mapRoles }}'
+            # this command just appends a value to the variable
+            # it should be possible by just writing the value next to the variable
+            # but due to the fact the variable contains an {{}}-expression, Kyverno seems to try and evaluate it
+            # I couldn't find a way to turn this behaviour off. Apparently just referencing as a value does not cause Kyverno to
+            # try and evaluate it
+            jmesPath: "replace_all(@, '{{oldEntry}}', '')"
+      mutate:
+        targets:
+          - apiVersion: v1
+            kind: ConfigMap
+            name: tester
+            namespace: default
+        patchStrategicMerge:
+          data:
+            mapRoles: "{{newEntries}}"
+            delete: "{{oldEntry}}"
