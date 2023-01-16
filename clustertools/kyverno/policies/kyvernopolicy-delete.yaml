@@ -1,10 +1,12 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: "update-entries-into-aws-auth-cm-via-secrets"
+  name: "delete-entries-into-aws-auth-cm-via-secrets"
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   rules:
-    - name: "update-aws-auth-entry-when-secret-is-updated"
+    - name: "remove-aws-auth-entry-when-secret-is-deleted"
       match:
         any:
           - resources:
@@ -19,7 +21,7 @@ spec:
         any:
           - key: "{{ request.operation }}"
             operator: Equals
-            value: UPDATE
+            value: DELETE
       context:
         # access current aws-auth entries via external source, so the value including an {{}} statement does not get evaluated
         - name: currentEntries
@@ -33,13 +35,6 @@ spec:
                 - {{request.oldObject.data.group | base64_decode(@)}}
                 rolearn: {{request.oldObject.data.rolearn | base64_decode(@)}}
                 username: {{request.oldObject.data.username | base64_decode(@)}}
-        - name: newEntry
-          variable:
-            value: |
-              - groups:
-                - {{request.object.data.group | base64_decode(@)}}
-                rolearn: {{request.object.data.rolearn | base64_decode(@)}}
-                username: {{request.object.data.username | base64_decode(@)}}
         - name: newEntries
           variable:
             value: '{{currentEntries.data.mapRoles }}'
@@ -48,7 +43,7 @@ spec:
             # but due to the fact the variable contains an {{}}-expression, Kyverno seems to try and evaluate it
             # I couldn't find a way to turn this behaviour off. Apparently just referencing as a value does not cause Kyverno to
             # try and evaluate it
-            jmesPath: "replace_all(@, '{{oldEntry}}', '{{newEntry}}')"
+            jmesPath: "replace_all(@, '{{oldEntry}}', '')"
       mutate:
         targets:
           - apiVersion: v1
