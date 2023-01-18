@@ -14,6 +14,10 @@ spec:
     chart: kyverno
     repoURL: https://kyverno.github.io/kyverno
     targetRevision: 2.6.0
+    helm:
+      parameters:
+        - name: config.existingConfig
+          value: kyverno-custom
   syncPolicy:
     automated:
       prune: true
