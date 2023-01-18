@@ -297,7 +297,7 @@ spec:
               string:
                 fmt: "%s-developer-aws-auth-entry"
         - fromFieldPath: status.iam.developerRoleArn
-          toFieldPath: spec.forProvider.manifest.stringData.userarn
+          toFieldPath: spec.forProvider.manifest.stringData.rolearn
           policy:
             fromFieldPath: Required
         - fromFieldPath: spec.application.namespace
@@ -401,7 +401,7 @@ spec:
               string:
                 fmt: "%s-admin-aws-auth-entry"
         - fromFieldPath: status.iam.adminRoleArn
-          toFieldPath: spec.forProvider.manifest.stringData.userarn
+          toFieldPath: spec.forProvider.manifest.stringData.rolearn
           policy:
             fromFieldPath: Required
         - fromFieldPath: spec.application.namespace
