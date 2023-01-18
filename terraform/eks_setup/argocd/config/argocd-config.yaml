@@ -15,5 +15,7 @@ configs:
     argocdServerAdminPassword: $2a$12$IRs7lU0wuPtsG76OsHWS8ONpyVymvHQeOR3wKZR.nUcx0PkIiZw62
   cm:
     "application.instanceLabelKey": argocd.argoproj.io/tracking-id
+    "resource.compareoptions": |
+      ignoreAggregatedRoles: true
 crds:
   keep: false
