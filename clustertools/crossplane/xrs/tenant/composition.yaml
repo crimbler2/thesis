@@ -36,6 +36,39 @@ spec:
         - fromFieldPath: spec.application.namespace
           toFieldPath: spec.forProvider.manifest.metadata.name
 
+    - name: tenant-argocd-application
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha1
+        kind: Object
+        spec:
+          forProvider:
+            manifest:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Application
+              metadata:
+                namespace: argocd-system
+                finalizers:
+                  - resources-finalizer.argocd.argoproj.io
+              spec:
+                project: default
+                source:
+                  targetRevision: HEAD
+                destination:
+                  server: https://kubernetes.default.svc
+                syncPolicy:
+                  automated:
+                    prune: true
+                    selfHeal: true
+          providerConfigRef:
+            name: kubernetes-provider-local-config
+      patches:
+        - fromFieldPath: spec.application.namespace
+          toFieldPath: spec.forProvider.manifest.spec.destination.namespace
+        - fromFieldPath: spec.application.repository
+          toFieldPath: spec.forProvider.manifest.spec.source.repoURL
+        - fromFieldPath: spec.application.path
+          toFieldPath: spec.forProvider.manifest.spec.source.path
+
     - name: developer-iam-role
       base:
         apiVersion: iam.aws.crossplane.io/v1beta1
