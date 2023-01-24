@@ -11,8 +11,6 @@ This is the directory structure:
 ```
 .
 └── infrastructure
-    ├── clusters
-    │   └── claims
     ├── clustertools
     │   ├── crossplane
     │   │   └── xrs
@@ -51,7 +49,6 @@ config files in the `tenants` folder. They again point to this same repo and the
 
 Under `clustertools/crossplane/xrs/eks_setup_xr` a Crossplane Composite Resource is defined and composed.
 This XR describes the same resources as the Terraform Setup.
-The folder `cluster_setup_claims` defines Claims for the just mentioned Composite Resource.
 
 On a high level, the folders point to each other via ArgoCD Applications like so:
 ```
