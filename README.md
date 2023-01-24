@@ -5,41 +5,43 @@ It holds different configuration files all related to Kubernetes, ArgoCD, Terraf
 Its primary use is to compare Crossplane and Terraform by implementing the same EKS Setup with each of them.
 The Setups then point to the directories in this Repository via ArgoCD Applications.
 
+It also has an Implementation of a 'Tenant'-Ressource for Kubernetes in Crossplane.
+This ressource contains all the ressources to enable a team to deploy into a specific namespace on a cluster.
+
 This repo can also serve as an example for using Crossplane, Terraform and ArgoCD.
 
 This is the directory structure:
 ```
 .
-└── infrastructure
-    ├── clustertools
-    │   ├── crossplane
-    │   │   └── xrs
-    │   │       ├── eks_setup_xr
-    │   │       └── vpc_xr
-    │   └── external-secrets
-    ├── remote_repos
-    │   ├── remote_repo_team_1
-    │   │   ├── base
-    │   │   └── overlays
-    │   │       ├── dev
-    │   │       └── prod
-    │   └── remote_repo_team_2
-    │       ├── base
-    │       └── overlays
-    │           ├── dev
-    │           └── prod
-    ├── root
-    │   ├── base
-    │   └── overlays
-    │       ├── dev
-    │       └── prod
-    ├── tenants
-    └── terraform
-              ├── terraform_my_eks
-              │   └── argocd_config
-              └── workspaces
-                  ├── int
-                  └── prod
+├── clustertools
+│   ├── crossplane
+│   │   └── xrs
+│   │       ├── eks_setup
+│   │       └── tenant
+│   └── external-secrets
+├── remote_repos
+│   ├── remote_repo_team_1
+│   │   ├── base
+│   │   └── overlays
+│   │       ├── dev
+│   │       └── prod
+│   └── remote_repo_team_2
+│       ├── base
+│       └── overlays
+│           ├── dev
+│           └── prod
+├── root
+│   ├── base
+│   └── overlays
+│       ├── dev
+│       └── prod
+├── tenants
+└── terraform
+          ├── terraform_my_eks
+          │   └── argocd_config
+          └── workspaces
+              ├── int
+              └── prod
 ```
 The Terraform directory contains the EKS Setup in Terraform. 
 
@@ -47,8 +49,10 @@ The root directory contains 2 ArgoCD ApplicationSets further configured by kusto
 One ApplicationSet applies the resources of the `clustertools` folder, the other will create the applications based on the
 config files in the `tenants` folder. They again point to this same repo and the folder `remote_repos`.
 
-Under `clustertools/crossplane/xrs/eks_setup_xr` a Crossplane Composite Resource is defined and composed.
+Under `clustertools/crossplane/xrs/eks_setup` a Crossplane Composite Resource is defined and composed.
 This XR describes the same resources as the Terraform Setup.
+
+The Tenant ressource lies in `clustertools/crossplane/xrs/tenant`.
 
 On a high level, the folders point to each other via ArgoCD Applications like so:
 ```
